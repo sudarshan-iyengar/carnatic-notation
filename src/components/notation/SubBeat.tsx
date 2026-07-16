@@ -65,22 +65,24 @@ export const SubBeat = ({ data, update, blockId, cellIndex, totalCells, widthRem
         {data.octave === 1 && <div className="w-1.5 h-1.5 print:w-1 print:h-1 rounded-full mb-0.5 print-exact" />}
       </div>
 
-      <input
-        id={`swara-${blockId}-${cellIndex}`}
-        type="text"
-        className="grid-input w-full text-center font-semibold uppercase relative z-10 swara-input swara-edit-input"
-        value={data.swara}
-        onChange={(event) => update({ ...data, swara: event.target.value })}
-        onKeyDown={(event) => handleKeyDown(event, 'swara')}
-      />
-      <span
-        className="pointer-events-none absolute z-20 w-full text-center font-semibold uppercase swara-display"
-        style={{
-          fontSize: getSwaraFontSize(data.swara, widthRem)
-        }}
-      >
-        {data.swara}
-      </span>
+      <div className="relative w-full swara-layer">
+        <input
+          id={`swara-${blockId}-${cellIndex}`}
+          type="text"
+          className="grid-input w-full text-center font-semibold uppercase relative z-10 swara-input swara-edit-input"
+          value={data.swara}
+          onChange={(event) => update({ ...data, swara: event.target.value })}
+          onKeyDown={(event) => handleKeyDown(event, 'swara')}
+        />
+        <span
+          className="pointer-events-none absolute z-20 w-full text-center font-semibold uppercase swara-display"
+          style={{
+            fontSize: getSwaraFontSize(data.swara, widthRem)
+          }}
+        >
+          {data.swara}
+        </span>
+      </div>
 
       <div className="h-2 w-full flex justify-center items-start">
         {data.octave === -1 && <div className="w-1.5 h-1.5 print:w-1 print:h-1 rounded-full mt-0.5 print-exact" />}

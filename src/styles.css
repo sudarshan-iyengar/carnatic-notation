@@ -173,6 +173,10 @@ body {
   padding-right: 0;
 }
 
+.swara-layer {
+  height: 1.75rem;
+}
+
 .swara-edit-input {
   color: transparent;
   caret-color: #111827;
@@ -184,6 +188,8 @@ body {
 }
 
 .swara-display {
+  left: 0;
+  top: 0;
   max-width: 100%;
   overflow: hidden;
   white-space: nowrap;
