@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carnatic Notation Editor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        body { font-family: 'Spectral', serif; background-color: #ffffff; color: #000; }
+        
+        .grid-input { 
+            background: transparent; 
+            outline: none; 
+            transition: all 0.2s;
+        }
+        .grid-input:hover { background-color: #f3f4f6; border-radius: 4px; }
+        .grid-input:focus { background-color: #eff6ff; border-bottom: 2px solid #93c5fd; border-radius: 4px 4px 0 0; }
+        
+        ::placeholder { color: #9ca3af; font-style: italic; opacity: 1; }
+        
+        .block-container .delete-btn { opacity: 0; transition: opacity 0.2s; }
+        .block-container:hover .delete-btn { opacity: 1; }
+
+        ::-webkit-scrollbar { display: none; }
+
+        .print-exact {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            background-color: black !important;
+        }
+
+        /* --- PDF EXPORT STYLES --- */
+        @media print {
+            body { background-color: white !important; margin: 0; padding: 0; }
+            @page { size: A4 portrait; margin: 0.5in; } 
+            
+            .no-print { display: none !important; }
+            .delete-btn { display: none !important; }
+            
+            /* Allow the container to shrink to fit the A4 width natively */
+            .print-workspace { 
+                margin: 0 auto !important; 
+                width: 100% !important; 
+                max-width: 100% !important; 
+                padding: 0 !important; 
+            }
+            
+            input { border: none !important; background: transparent !important; box-shadow: none !important; color: black !important; }
+            input::placeholder { color: transparent !important; } 
+            
+            .print-dot { color: #9ca3af !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } 
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // IAST Transliteration for Lyrics & General Intro Fields
+        const transliterate = (text) => {
+            return text
+                .replace(/aa/g, 'ā').replace(/A/g, 'ā')
+                .replace(/ii/g, 'ī').replace(/I/g, 'ī')
+                .replace(/uu/g, 'ū').replace(/U/g, 'ū')
+                .replace(/ee/g, 'ē').replace(/E/g, 'ē')
+                .replace(/oo/g, 'ō').replace(/O/g, 'ō')
+                .replace(/T/g, 'ṭ').replace(/D/g, 'ḍ').replace(/N/g, 'ṇ')
+                .replace(/L/g, 'ḷ').replace(/sh/g, 'ś').replace(/Sh/g, 'ṣ');
+        };
+
+        // Specific Transliteration for Arohanam/Avarohanam Scales
+        const transScale = (text) => {
+            return text
+                .replace(/1/g, '₁')
+                .replace(/2/g, '₂')
+                .replace(/3/g, '₃')
+                .replace(/\^/g, '\u0307') // Combining Dot Above
+                .replace(/_/g, '\u0323'); // Combining Dot Below
+        };
+
+        const generateId = () => Math.random().toString(36).substr(2, 9);
+
+        // --- SUB COMPONENTS ---
+
+        const SubBeat = ({ data, update, blockId, cIndex, hideSahitya }) => {
+            
+            const handleKeyDown = (e, type) => {
+                let moveCol = null;
+
+                // Tab Navigation
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    moveCol = e.shiftKey ? cIndex - 1 : cIndex + 1;
+                } 
+                // Right Arrow Navigation (If at end of text)
+                else if (e.key === 'ArrowRight' && e.target.selectionStart === e.target.value.length) {
+                    e.preventDefault();
+                    moveCol = cIndex + 1;
+                } 
+                // Left Arrow Navigation (If at start of text)
+                else if (e.key === 'ArrowLeft' && e.target.selectionEnd === 0) {
+                    e.preventDefault();
+                    moveCol = cIndex - 1;
+                }
+
+                if (moveCol !== null) {
+                    let nextCol = moveCol;
+                    if (nextCol >= 32) nextCol = 0;
+                    if (nextCol < 0) nextCol = 31;
+                    
+                    const nextElement = document.getElementById(`${type}-${blockId}-${nextCol}`);
+                    if (nextElement) {
+                        nextElement.focus();
+                        nextElement.select(); 
+                    }
+                } 
+                // Octave controls
+                else if (type === 'swara') {
+                    if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        update({ ...data, octave: Math.min(data.octave + 1, 1) });
+                    } else if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        update({ ...data, octave: Math.max(data.octave - 1, -1) });
+                    }
+                }
+            };
+
+            return (
+                <div className="flex flex-col items-center w-10 print:w-8 transition-all">
+                    {/* Upper Octave Dot */}
+                    <div className="h-2 w-full flex justify-center items-end">
+                        {data.octave === 1 && <div className="w-1.5 h-1.5 print:w-1 print:h-1 rounded-full mb-0.5 print-exact"></div>}
+                    </div>
+                    
+                    <input 
+                        id={`swara-${blockId}-${cIndex}`}
+                        type="text" 
+                        maxLength="2"
+                        className="grid-input w-full text-center font-semibold text-lg uppercase relative z-10"
+                        value={data.swara}
+                        onChange={(e) => update({ ...data, swara: e.target.value })}
+                        onKeyDown={(e) => handleKeyDown(e, 'swara')}
+                    />
+                    
+                    {/* Lower Octave Dot */}
+                    <div className="h-2 w-full flex justify-center items-start">
+                         {data.octave === -1 && <div className="w-1.5 h-1.5 print:w-1 print:h-1 rounded-full mt-0.5 print-exact"></div>}
+                    </div>
+
+                    {!hideSahitya && (
+                        <div className="relative w-full flex justify-center mt-1">
+                            {data.lyric === "" && <span className="print-dot absolute text-[15px] pointer-events-none">.</span>}
+                            <input 
+                                id={`sahityam-${blockId}-${cIndex}`}
+                                type="text" 
+                                className="grid-input relative z-10 w-full text-center text-[15px] text-gray-900"
+                                value={data.lyric}
+                                onChange={(e) => update({ ...data, lyric: transliterate(e.target.value) })}
+                                onKeyDown={(e) => handleKeyDown(e, 'sahityam')}
+                            />
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const DividerSlot = ({ char, widthClass, isSwaraOnly }) => (
+            <div className={`${widthClass} flex justify-center items-center text-2xl font-light text-gray-400 ${isSwaraOnly ? '' : 'pb-6'} shrink-0 transition-all`}>
+                {char}
+            </div>
+        );
+
+        // --- BLOCK COMPONENTS ---
+
+        const IntroBlock = ({ data, update }) => (
+            <div className="flex justify-between items-start mb-12 text-[15px] leading-relaxed w-full border-b border-gray-200 pb-8">
+                <div className="space-y-1 w-1/2 pr-4">
+                    <div className="flex items-center"><strong className="w-24 shrink-0">Rāgam:</strong> 
+                        <input className="grid-input w-full" value={data.ragam} onChange={e => update({...data, ragam: transliterate(e.target.value)})} placeholder="Ragam" />
+                    </div>
+                    <div className="flex items-center"><strong className="w-24 shrink-0">Ārōhanam:</strong> 
+                        <input className="grid-input w-full uppercase tracking-wider" value={data.arohanam} onChange={e => update({...data, arohanam: transScale(e.target.value)})} placeholder="S R G M P D N S" />
+                    </div>
+                    <div className="flex items-center"><strong className="w-24 shrink-0">Tālam:</strong> 
+                        <input className="grid-input w-full" value={data.talam} onChange={e => update({...data, talam: transliterate(e.target.value)})} placeholder="Talam" />
+                    </div>
+                </div>
+                <div className="space-y-1 w-1/2 pl-4">
+                    <div className="flex items-center"><strong className="w-24 shrink-0">Janyam of:</strong> 
+                        <input className="grid-input w-full" value={data.janyam} onChange={e => update({...data, janyam: transliterate(e.target.value)})} placeholder="Melakarta" />
+                    </div>
+                    <div className="flex items-center"><strong className="w-28 shrink-0">Avarōhanam:</strong> 
+                        <input className="grid-input w-full uppercase tracking-wider" value={data.avarohanam} onChange={e => update({...data, avarohanam: transScale(e.target.value)})} placeholder="S N D P M G R S" />
+                    </div>
+                    <div className="flex items-center"><strong className="w-24 shrink-0">Composer:</strong> 
+                        <input className="grid-input w-full" value={data.composer} onChange={e => update({...data, composer: transliterate(e.target.value)})} placeholder="Composer" />
+                    </div>
+                </div>
+            </div>
+        );
+
+        const HeadingBlock = ({ block, updateBlock, removeBlock }) => (
+            <div className="block-container relative w-full mb-8 bg-gray-50 rounded py-1 print:bg-transparent">
+                <input 
+                    type="text" 
+                    className="grid-input w-full text-center text-xl font-bold tracking-wide bg-transparent"
+                    value={block.data}
+                    onChange={(e) => updateBlock(block.id, e.target.value)}
+                    placeholder="Section Heading (e.g. Pallavi)"
+                />
+                <button onClick={() => removeBlock(block.id)} className="delete-btn absolute -right-8 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 font-sans text-xl px-2">✕</button>
+            </div>
+        );
+
+        const AvartanamBlock = ({ block, updateBlock, removeBlock, isSwaraOnly }) => {
+            const updateCell = (colIndex, newData) => {
+                const newGridData = [...block.data];
+                newGridData[colIndex] = newData;
+                updateBlock(block.id, newGridData);
+            };
+
+            const renderBeatGroup = (startIdx) => {
+                const group = [];
+                for (let i = startIdx; i < startIdx + 4; i++) {
+                    group.push(
+                        <SubBeat key={i} data={block.data[i]} blockId={block.id} cIndex={i} update={(d) => updateCell(i, d)} hideSahitya={isSwaraOnly} />
+                    );
+                }
+                return <div className="flex flex-row flex-1 justify-between">{group}</div>;
+            };
+
+            return (
+                <div className="block-container relative w-full mb-10 pb-4 border-b border-gray-100 print:border-none print:mb-6">
+                    <button onClick={() => removeBlock(block.id)} className="delete-btn absolute -right-8 top-0 text-gray-400 hover:text-red-500 font-sans text-xl px-2 z-20">✕</button>
+                    
+                    {/* LINE 1: Laghu */}
+                    {/* Note: The gaps use 'print:w-4' to naturally compress when rendering to A4 format */}
+                    <div className="flex flex-row items-center w-full mb-6">
+                        <DividerSlot char="||" widthClass="w-10 print:w-6" isSwaraOnly={isSwaraOnly} />
+                        {renderBeatGroup(0)}
+                        <div className="w-10 print:w-4 shrink-0 transition-all"></div> 
+                        {renderBeatGroup(4)} 
+                        <DividerSlot char="" widthClass="w-14 print:w-6" isSwaraOnly={isSwaraOnly} /> 
+                        {renderBeatGroup(8)}
+                        <div className="w-10 print:w-4 shrink-0 transition-all"></div> 
+                        {renderBeatGroup(12)} 
+                        <DividerSlot char="|" widthClass="w-10 print:w-6" isSwaraOnly={isSwaraOnly} />
+                    </div>
+
+                    {/* LINE 2: Dhrutams */}
+                    <div className="flex flex-row items-center w-full">
+                        <DividerSlot char="" widthClass="w-10 print:w-6" isSwaraOnly={isSwaraOnly} />
+                        {renderBeatGroup(16)}
+                        <div className="w-10 print:w-4 shrink-0 transition-all"></div> 
+                        {renderBeatGroup(20)} 
+                        <DividerSlot char="|" widthClass="w-14 print:w-6" isSwaraOnly={isSwaraOnly} /> 
+                        {renderBeatGroup(24)}
+                        <div className="w-10 print:w-4 shrink-0 transition-all"></div> 
+                        {renderBeatGroup(28)} 
+                        <DividerSlot char="||" widthClass="w-10 print:w-6" isSwaraOnly={isSwaraOnly} />
+                    </div>
+                </div>
+            );
+        };
+
+        // --- MAIN APP ---
+
+        const App = () => {
+            const emptyAvartanam = () => Array.from({ length: 32 }, () => ({ swara: "", lyric: "", octave: 0 }));
+            
+            const [intro, setIntro] = useState({
+                show: true,
+                data: { ragam: '', janyam: '', arohanam: '', avarohanam: '', talam: '', composer: '' }
+            });
+
+            const [blocks, setBlocks] = useState([
+                { id: generateId(), type: 'heading', data: '' },
+                { id: generateId(), type: 'avartanam', data: emptyAvartanam() }
+            ]);
+
+            const updateIntro = (newData) => setIntro({ ...intro, data: newData });
+
+            const addBlock = (type) => {
+                const newBlock = { 
+                    id: generateId(), 
+                    type: type, 
+                    data: type === 'heading' ? '' : emptyAvartanam() 
+                };
+                setBlocks([...blocks, newBlock]);
+            };
+
+            const updateBlock = (id, newData) => {
+                setBlocks(blocks.map(b => b.id === id ? { ...b, data: newData } : b));
+            };
+
+            const removeBlock = (id) => {
+                setBlocks(blocks.filter(b => b.id !== id));
+            };
+
+            const triggerPrint = () => {
+                window.print();
+            };
+
+            return (
+                <div className="min-h-screen flex">
+                    
+                    {/* LEFT SIDEBAR */}
+                    <div className="no-print fixed left-0 top-0 h-full w-56 bg-gray-50 border-r border-gray-200 p-4 flex flex-col space-y-3 shadow-sm z-50">
+                        <h1 className="text-lg font-bold font-sans text-gray-800 mb-2 border-b pb-2">Notation Editor</h1>
+                        <p className="text-xs text-gray-500 mb-4 pb-2 border-b leading-relaxed">
+                            <strong>Arrow Keys:</strong> Navigate grid<br/>
+                            <strong>↑ / ↓:</strong> Swara Octave Dots<br/>
+                            <strong>1, 2, 3:</strong> Subscripts (Scale)<br/>
+                            <strong>^ / _:</strong> Scale Dots (e.g. S^)
+                        </p>
+                        
+                        <button 
+                            onClick={() => setIntro({ ...intro, show: !intro.show })}
+                            className={`px-4 py-2 rounded font-sans text-sm font-semibold transition ${intro.show ? 'bg-blue-100 text-blue-700' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+                        >
+                            {intro.show ? 'Hide Intro' : 'Show Intro'}
+                        </button>
+
+                        <hr className="border-gray-300 my-2"/>
+
+                        <button 
+                            onClick={() => addBlock('heading')}
+                            className="px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-100 rounded font-sans text-sm shadow-sm transition"
+                        >
+                            + Add Heading
+                        </button>
+                        
+                        <button 
+                            onClick={() => addBlock('avartanam')}
+                            className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded font-sans text-sm shadow-sm transition"
+                        >
+                            + Add Avartanam
+                        </button>
+
+                        <button 
+                            onClick={() => addBlock('swara-avartanam')}
+                            className="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded font-sans text-sm shadow-sm transition"
+                        >
+                            + Add Swara Line
+                        </button>
+
+                        <div className="flex-grow"></div>
+
+                        <button 
+                            onClick={triggerPrint}
+                            className="px-4 py-3 bg-gray-800 text-white hover:bg-black rounded font-sans font-semibold text-sm shadow-sm transition flex justify-center items-center gap-2"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                            Export to PDF
+                        </button>
+                    </div>
+
+                    {/* MAIN DOCUMENT WORKSPACE */}
+                    <div className="print-workspace ml-56 w-full p-12 flex justify-center">
+                        <div className="w-[900px] print:w-full print:max-w-full transition-all">
+                            
+                            {intro.show && <IntroBlock data={intro.data} update={updateIntro} />}
+
+                            <div className="w-full flex flex-col items-center mt-4">
+                                {blocks.map((block) => {
+                                    if (block.type === 'heading') {
+                                        return <HeadingBlock key={block.id} block={block} updateBlock={updateBlock} removeBlock={removeBlock} />;
+                                    } else if (block.type === 'avartanam' || block.type === 'swara-avartanam') {
+                                        return <AvartanamBlock 
+                                            key={block.id} 
+                                            block={block} 
+                                            updateBlock={updateBlock} 
+                                            removeBlock={removeBlock} 
+                                            isSwaraOnly={block.type === 'swara-avartanam'} 
+                                        />;
+                                    }
+                                    return null;
+                                })}
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
