@@ -1,12 +1,15 @@
+import { BlockInsertControls } from './BlockInsertControls';
 import type { HeadingBlock as HeadingBlockType, NotationBlock } from '../../types/notation';
+import type { CellBlockType } from '../../types/notation';
 
 type HeadingBlockProps = {
   block: HeadingBlockType;
   onUpdate: (blockId: string, block: NotationBlock) => void;
   onRemove: (blockId: string) => void;
+  onInsertAfter: (blockId: string, type: 'heading' | CellBlockType) => void;
 };
 
-export const HeadingBlock = ({ block, onUpdate, onRemove }: HeadingBlockProps) => (
+export const HeadingBlock = ({ block, onUpdate, onRemove, onInsertAfter }: HeadingBlockProps) => (
   <div className="block-container relative w-full mb-8 bg-gray-50 rounded py-1 print:bg-transparent">
     <input
       type="text"
@@ -21,5 +24,6 @@ export const HeadingBlock = ({ block, onUpdate, onRemove }: HeadingBlockProps) =
     >
       ✕
     </button>
+    <BlockInsertControls blockId={block.id} onInsertAfter={onInsertAfter} />
   </div>
 );

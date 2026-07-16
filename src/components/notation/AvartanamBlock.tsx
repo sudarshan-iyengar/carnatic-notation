@@ -1,16 +1,18 @@
 import { Fragment } from 'react';
+import { BlockInsertControls } from './BlockInsertControls';
 import { DividerSlot } from './DividerSlot';
 import { SubBeat } from './SubBeat';
 import { DEFAULT_TALA_SPACING, getTala, getTalaRows, type TalaSegment } from '../../lib/talas';
-import type { CellBlock, NotationBlock, NotationCell } from '../../types/notation';
+import type { CellBlock, CellBlockType, NotationBlock, NotationCell } from '../../types/notation';
 
 type AvartanamBlockProps = {
   block: CellBlock;
   onUpdate: (blockId: string, block: NotationBlock) => void;
   onRemove: (blockId: string) => void;
+  onInsertAfter: (blockId: string, type: 'heading' | CellBlockType) => void;
 };
 
-export const AvartanamBlock = ({ block, onUpdate, onRemove }: AvartanamBlockProps) => {
+export const AvartanamBlock = ({ block, onUpdate, onRemove, onInsertAfter }: AvartanamBlockProps) => {
   const isSwaraOnly = block.type === 'swara-avartanam';
   const tala = getTala(block.talaId);
   const spacing = tala.spacing ?? DEFAULT_TALA_SPACING;
@@ -74,6 +76,7 @@ export const AvartanamBlock = ({ block, onUpdate, onRemove }: AvartanamBlockProp
           {row.segments.map(renderSegment)}
         </div>
       ))}
+      <BlockInsertControls blockId={block.id} onInsertAfter={onInsertAfter} />
     </div>
   );
 };

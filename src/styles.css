@@ -25,7 +25,9 @@ button {
 .absolute { position: absolute; }
 .relative { position: relative; }
 .hidden { display: none; }
+.-bottom-5 { bottom: -1.25rem; }
 .left-0 { left: 0; }
+.left-1\/2 { left: 50%; }
 .top-0 { top: 0; }
 .top-1\/2 { top: 50%; }
 .-right-8 { right: -2rem; }
@@ -46,6 +48,7 @@ button {
 .shrink-0 { flex-shrink: 0; }
 .pointer-events-none { pointer-events: none; }
 .-translate-y-1\/2 { transform: translateY(-50%); }
+.-translate-x-1\/2 { transform: translateX(-50%); }
 .h-1\.5 { height: 0.375rem; }
 .h-2 { height: 0.5rem; }
 .h-4 { height: 1rem; }

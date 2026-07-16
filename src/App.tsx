@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { EditorWorkspace } from './components/EditorWorkspace';
 import { Sidebar } from './components/Sidebar';
-import { createId } from './lib/id';
 import { downloadDocumentFile, readDocumentFile } from './lib/localFiles';
 import { clearDraft, loadDraft, saveDraft } from './lib/storage';
 import { applyTalaToDocument, getTalaOptions } from './lib/talas';
-import { createBlankDocument, createCellBlock } from './lib/templates';
+import { createBlankDocument, createCellBlock, createDocumentFromTemplate, createHeadingBlock, getTemplateOptions } from './lib/templates';
 import type { CellBlockType, NotationBlock, NotationDocument, NotationMetadata } from './types/notation';
 
 const touchDocument = (document: NotationDocument): NotationDocument => ({
@@ -34,7 +33,7 @@ const App = () => {
     setDocument((current) =>
       touchDocument({
         ...current,
-        blocks: [...current.blocks, { id: createId(), type: 'heading', text: '' }]
+        blocks: [...current.blocks, createHeadingBlock()]
       })
     );
   };
@@ -66,6 +65,22 @@ const App = () => {
     );
   };
 
+  const insertBlockAfter = (blockId: string, type: 'heading' | CellBlockType) => {
+    setDocument((current) => {
+      const insertIndex = current.blocks.findIndex((block) => block.id === blockId);
+      const nextBlock = type === 'heading' ? createHeadingBlock() : createCellBlock(type, current.talaId);
+
+      if (insertIndex === -1) {
+        return touchDocument({ ...current, blocks: [...current.blocks, nextBlock] });
+      }
+
+      return touchDocument({
+        ...current,
+        blocks: [...current.blocks.slice(0, insertIndex + 1), nextBlock, ...current.blocks.slice(insertIndex + 1)]
+      });
+    });
+  };
+
   const triggerPrint = () => {
     window.print();
   };
@@ -88,6 +103,21 @@ const App = () => {
     clearDraft();
     setDocument(createBlankDocument());
     setStatusMessage('New notation started');
+  };
+
+  const startTemplate = (templateId: string) => {
+    const hasContent =
+      document.metadata.ragam ||
+      document.metadata.composer ||
+      document.blocks.some((block) => (block.type === 'heading' ? block.text : block.cells.some((cell) => cell.swara || cell.lyric)));
+
+    if (hasContent && !window.confirm('Start this template? Your current draft will be replaced, so save a JSON copy first if you need it.')) {
+      return;
+    }
+
+    clearDraft();
+    setDocument(createDocumentFromTemplate(templateId));
+    setStatusMessage('Template started');
   };
 
   const saveJsonFile = () => {
@@ -113,8 +143,10 @@ const App = () => {
         statusMessage={statusMessage}
         talaId={document.talaId}
         talaOptions={getTalaOptions()}
+        templateOptions={getTemplateOptions()}
         onToggleIntro={toggleIntro}
         onChangeTala={changeTala}
+        onStartTemplate={startTemplate}
         onNewDocument={newDocument}
         onSaveFile={saveJsonFile}
         onOpenFile={openJsonFile}
@@ -128,6 +160,7 @@ const App = () => {
         onUpdateMetadata={updateMetadata}
         onUpdateBlock={updateBlock}
         onRemoveBlock={removeBlock}
+        onInsertAfter={insertBlockAfter}
       />
     </div>
   );

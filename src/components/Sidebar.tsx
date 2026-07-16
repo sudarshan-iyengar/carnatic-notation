@@ -1,13 +1,16 @@
 import { useRef } from 'react';
 import type { TalaOption } from '../lib/talas';
+import type { TemplateOption } from '../lib/templates';
 
 type SidebarProps = {
   introVisible: boolean;
   statusMessage: string;
   talaId: string;
   talaOptions: TalaOption[];
+  templateOptions: TemplateOption[];
   onToggleIntro: () => void;
   onChangeTala: (talaId: string) => void;
+  onStartTemplate: (templateId: string) => void;
   onNewDocument: () => void;
   onSaveFile: () => void;
   onOpenFile: (file: File) => void;
@@ -22,8 +25,10 @@ export const Sidebar = ({
   statusMessage,
   talaId,
   talaOptions,
+  templateOptions,
   onToggleIntro,
   onChangeTala,
+  onStartTemplate,
   onNewDocument,
   onSaveFile,
   onOpenFile,
@@ -71,6 +76,23 @@ export const Sidebar = ({
         </select>
         <span className="block text-xs text-gray-500 leading-relaxed">{talaOptions.find((option) => option.id === talaId)?.description}</span>
       </label>
+
+      <div className="space-y-3 border-b border-gray-200 pb-3 font-sans">
+        <p className="text-xs font-semibold text-gray-700">Templates</p>
+        {templateOptions
+          .filter((option) => option.id === 'adi-varnam' || option.id === 'ata-varnam')
+          .map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              onClick={() => onStartTemplate(option.id)}
+              className="w-full rounded border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 shadow-sm transition hover:bg-gray-100"
+              title={option.description}
+            >
+              {option.label}
+            </button>
+          ))}
+      </div>
 
       <div className="space-y-3 border-b border-gray-200 pb-3">
       <button
