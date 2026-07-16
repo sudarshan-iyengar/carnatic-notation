@@ -9,7 +9,13 @@ export const saveDraft = (document: NotationDocument) => {
 
 export const loadDraft = (): NotationDocument | null => {
   const draft = window.localStorage.getItem(DRAFT_STORAGE_KEY);
-  return draft ? parseDocument(draft) : null;
+  if (!draft) return null;
+
+  try {
+    return parseDocument(draft);
+  } catch {
+    return null;
+  }
 };
 
 export const clearDraft = () => {

@@ -1,6 +1,12 @@
+import { useRef } from 'react';
+
 type SidebarProps = {
   introVisible: boolean;
+  statusMessage: string;
   onToggleIntro: () => void;
+  onNewDocument: () => void;
+  onSaveFile: () => void;
+  onOpenFile: (file: File) => void;
   onAddHeading: () => void;
   onAddAvartanam: () => void;
   onAddSwaraLine: () => void;
@@ -9,23 +15,30 @@ type SidebarProps = {
 
 export const Sidebar = ({
   introVisible,
+  statusMessage,
   onToggleIntro,
+  onNewDocument,
+  onSaveFile,
+  onOpenFile,
   onAddHeading,
   onAddAvartanam,
   onAddSwaraLine,
   onPrint
-}: SidebarProps) => (
-  <div className="no-print fixed left-0 top-0 h-full w-56 bg-gray-50 border-r border-gray-200 p-4 flex flex-col space-y-3 shadow-sm z-50">
-    <h1 className="text-lg font-bold font-sans text-gray-800 mb-2 border-b pb-2">Notation Editor</h1>
-    <p className="text-xs text-gray-500 mb-4 pb-2 border-b leading-relaxed">
-      <strong>Arrow Keys:</strong> Navigate grid
-      <br />
-      <strong>↑ / ↓:</strong> Swara Octave Dots
-      <br />
-      <strong>1, 2, 3:</strong> Subscripts (Scale)
-      <br />
-      <strong>^ / _:</strong> Scale Dots (e.g. S^)
-    </p>
+}: SidebarProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <div className="no-print fixed left-0 top-0 h-full w-56 bg-gray-50 border-r border-gray-200 p-4 flex flex-col space-y-3 shadow-sm z-50">
+      <h1 className="text-lg font-bold font-sans text-gray-800 mb-2 border-b pb-2">Notation Editor</h1>
+      <p className="text-xs text-gray-500 mb-4 pb-2 border-b leading-relaxed">
+        <strong>Arrow Keys:</strong> Navigate grid
+        <br />
+        <strong>↑ / ↓:</strong> Swara Octave Dots
+        <br />
+        <strong>1, 2, 3:</strong> Subscripts (Scale)
+        <br />
+        <strong>^ / _:</strong> Scale Dots (e.g. S^)
+      </p>
 
     <button
       onClick={onToggleIntro}
@@ -35,6 +48,43 @@ export const Sidebar = ({
     >
       {introVisible ? 'Hide Intro' : 'Show Intro'}
     </button>
+
+    <div className="space-y-3 border-b border-gray-200 pb-3">
+      <button
+        onClick={onNewDocument}
+        className="w-full px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-100 rounded font-sans text-sm shadow-sm transition"
+      >
+        New Notation
+      </button>
+
+      <button
+        onClick={onSaveFile}
+        className="w-full px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-100 rounded font-sans text-sm shadow-sm transition"
+      >
+        Save JSON
+      </button>
+
+      <button
+        onClick={() => fileInputRef.current?.click()}
+        className="w-full px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-100 rounded font-sans text-sm shadow-sm transition"
+      >
+        Open JSON
+      </button>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="application/json,.json"
+        className="hidden"
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          if (file) onOpenFile(file);
+          event.target.value = '';
+        }}
+      />
+
+      <p className="text-xs text-gray-500 font-sans leading-relaxed">{statusMessage}</p>
+    </div>
 
     <hr className="border-gray-300 my-2" />
 
@@ -76,4 +126,5 @@ export const Sidebar = ({
       Export to PDF
     </button>
   </div>
-);
+  );
+};
