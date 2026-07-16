@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { EditorWorkspace } from './components/EditorWorkspace';
 import { Sidebar } from './components/Sidebar';
 import { downloadDocumentFile, readDocumentFile } from './lib/localFiles';
+import { exportNotationPdf } from './lib/pdfExport';
 import { clearDraft, loadDraft, saveDraft } from './lib/storage';
 import { applyTalaToDocument, getTalaOptions } from './lib/talas';
 import { createBlankDocument, createCellBlock, createDocumentFromTemplate, createHeadingBlock, getTemplateOptions } from './lib/templates';
@@ -81,8 +82,15 @@ const App = () => {
     });
   };
 
-  const triggerPrint = () => {
-    window.print();
+  const exportPdf = async () => {
+    try {
+      setStatusMessage('Preparing PDF...');
+      await exportNotationPdf(document);
+      setStatusMessage('Downloaded PDF');
+    } catch (error) {
+      setStatusMessage('Could not export PDF');
+      window.alert(error instanceof Error ? error.message : 'Could not export PDF.');
+    }
   };
 
   const changeTala = (talaId: string) => {
@@ -153,7 +161,7 @@ const App = () => {
         onAddHeading={addHeading}
         onAddAvartanam={() => addCellBlock('avartanam')}
         onAddSwaraLine={() => addCellBlock('swara-avartanam')}
-        onPrint={triggerPrint}
+        onPrint={exportPdf}
       />
       <EditorWorkspace
         document={document}

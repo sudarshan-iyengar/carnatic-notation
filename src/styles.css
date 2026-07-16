@@ -221,6 +221,91 @@ body {
   background-color: black !important;
 }
 
+body.pdf-exporting {
+  background-color: #ffffff !important;
+}
+
+body.pdf-exporting .no-print,
+body.pdf-exporting .delete-btn,
+body.pdf-exporting .print-hidden-block {
+  display: none !important;
+}
+
+body.pdf-exporting .print-workspace {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body.pdf-exporting .editor-page {
+  width: 980px !important;
+  max-width: 980px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  transition: none !important;
+}
+
+body.pdf-exporting .notation-stack {
+  margin-top: 0.5rem !important;
+}
+
+body.pdf-exporting .intro-block {
+  margin-bottom: 2.25rem !important;
+  padding-bottom: 0.75rem !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+body.pdf-exporting .heading-block {
+  margin: 1.5rem 0 0.9rem !important;
+  padding: 0.25rem 0 !important;
+  background-color: #f8fafc !important;
+  border-radius: 4px !important;
+}
+
+body.pdf-exporting .notation-block {
+  margin-bottom: 1.35rem !important;
+  padding-bottom: 0.7rem !important;
+  border-bottom: 1px solid #f3f4f6 !important;
+}
+
+body.pdf-exporting .notation-row {
+  margin-bottom: 0.85rem !important;
+}
+
+body.pdf-exporting input {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body.pdf-exporting input::placeholder {
+  color: transparent !important;
+}
+
+body.pdf-exporting .pdf-export-value {
+  color: #000000 !important;
+  display: block !important;
+  white-space: pre !important;
+  min-height: 1em !important;
+}
+
+body.pdf-exporting .intro-block .pdf-export-value {
+  line-height: 1.5 !important;
+}
+
+body.pdf-exporting .heading-block .pdf-export-value,
+body.pdf-exporting .sahityam-layer .pdf-export-value {
+  width: 100% !important;
+}
+
+body.pdf-exporting .grid-input:hover,
+body.pdf-exporting .grid-input:focus {
+  background: transparent !important;
+  border-bottom: none !important;
+  border-radius: 0 !important;
+}
+
 @media print {
   body {
     background-color: white !important;
