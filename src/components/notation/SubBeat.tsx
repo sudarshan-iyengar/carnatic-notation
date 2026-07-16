@@ -8,10 +8,11 @@ type SubBeatProps = {
   blockId: string;
   cellIndex: number;
   totalCells: number;
+  widthRem: number;
   hideSahitya: boolean;
 };
 
-export const SubBeat = ({ data, update, blockId, cellIndex, totalCells, hideSahitya }: SubBeatProps) => {
+export const SubBeat = ({ data, update, blockId, cellIndex, totalCells, widthRem, hideSahitya }: SubBeatProps) => {
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>, type: 'swara' | 'sahityam') => {
     let moveCol: number | null = null;
 
@@ -48,7 +49,7 @@ export const SubBeat = ({ data, update, blockId, cellIndex, totalCells, hideSahi
   };
 
   return (
-    <div className="flex flex-col items-center w-10 print:w-8 transition-all">
+    <div className="flex flex-col items-center print:w-8 transition-all" style={{ width: `${widthRem}rem` }}>
       <div className="h-2 w-full flex justify-center items-end">
         {data.octave === 1 && <div className="w-1.5 h-1.5 print:w-1 print:h-1 rounded-full mb-0.5 print-exact" />}
       </div>

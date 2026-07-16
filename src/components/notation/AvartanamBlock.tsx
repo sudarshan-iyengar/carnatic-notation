@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import { DividerSlot } from './DividerSlot';
 import { SubBeat } from './SubBeat';
-import { getTala, getTalaRows, type TalaSegment } from '../../lib/talas';
+import { DEFAULT_TALA_SPACING, getTala, getTalaRows, type TalaSegment } from '../../lib/talas';
 import type { CellBlock, NotationBlock, NotationCell } from '../../types/notation';
 
 type AvartanamBlockProps = {
@@ -13,6 +13,7 @@ type AvartanamBlockProps = {
 export const AvartanamBlock = ({ block, onUpdate, onRemove }: AvartanamBlockProps) => {
   const isSwaraOnly = block.type === 'swara-avartanam';
   const tala = getTala(block.talaId);
+  const spacing = tala.spacing ?? DEFAULT_TALA_SPACING;
   const rows = getTalaRows(block.talaId);
 
   const updateCell = (cellIndex: number, newData: NotationCell) => {
@@ -22,7 +23,13 @@ export const AvartanamBlock = ({ block, onUpdate, onRemove }: AvartanamBlockProp
   };
 
   const renderBeatGroup = (start: number, count: number) => (
-    <div className="flex flex-row shrink-0 justify-between" style={{ width: `${count * 2.5}rem` }}>
+    <div
+      className="flex flex-row shrink-0 justify-between"
+      style={{
+        width: `${count * spacing.cellWidthRem}rem`,
+        marginRight: `${spacing.groupGapRem}rem`
+      }}
+    >
       {Array.from({ length: count }, (_, offset) => {
         const cellIndex = start + offset;
         return (
@@ -32,6 +39,7 @@ export const AvartanamBlock = ({ block, onUpdate, onRemove }: AvartanamBlockProp
             blockId={block.id}
             cellIndex={cellIndex}
             totalCells={tala.totalCells}
+            widthRem={spacing.cellWidthRem}
             update={(cell) => updateCell(cellIndex, cell)}
             hideSahitya={isSwaraOnly}
           />

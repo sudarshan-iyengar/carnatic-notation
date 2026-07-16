@@ -46,6 +46,15 @@ describe('talas', () => {
     expect(groups[13]).toMatchObject({ start: 52, count: 4 });
   });
 
+  it('gives dense talas a compact spacing model with visible group gaps', () => {
+    const tala = getTala('khanda-ata-2-kalai');
+
+    expect(tala.spacing).toEqual({
+      cellWidthRem: 2,
+      groupGapRem: 1.1
+    });
+  });
+
   it('resizes up by appending blank cells while preserving existing data', () => {
     const cells = createCellBlock('avartanam', 'khanda-chapu').cells;
     cells[0] = { swara: 'S', lyric: 'sa', octave: 1 };

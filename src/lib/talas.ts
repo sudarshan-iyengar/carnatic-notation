@@ -25,12 +25,18 @@ export type TalaRow = {
   segments: TalaSegment[];
 };
 
+export type TalaSpacing = {
+  cellWidthRem: number;
+  groupGapRem: number;
+};
+
 export type TalaDefinition = {
   id: string;
   label: string;
   displayName: string;
   description: string;
   totalCells: number;
+  spacing?: TalaSpacing;
   rows: TalaRow[];
 };
 
@@ -52,6 +58,11 @@ const group = (start: number, count: number): TalaGroupSegment => ({
   start,
   count
 });
+
+export const DEFAULT_TALA_SPACING: TalaSpacing = {
+  cellWidthRem: 2.5,
+  groupGapRem: 0.5
+};
 
 export const talaRegistry: Record<string, TalaDefinition> = {
   'adi-2-kalai-current': {
@@ -155,6 +166,10 @@ export const talaRegistry: Record<string, TalaDefinition> = {
     displayName: 'Khaṇḍa Aṭa tālam',
     description: '14 aksharas, 2 kalai, 56 notation cells',
     totalCells: 56,
+    spacing: {
+      cellWidthRem: 2,
+      groupGapRem: 1.1
+    },
     rows: [
       {
         id: 'khanda-ata-laghu-1',
