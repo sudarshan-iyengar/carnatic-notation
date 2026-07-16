@@ -1,9 +1,13 @@
 import { useRef } from 'react';
+import type { TalaOption } from '../lib/talas';
 
 type SidebarProps = {
   introVisible: boolean;
   statusMessage: string;
+  talaId: string;
+  talaOptions: TalaOption[];
   onToggleIntro: () => void;
+  onChangeTala: (talaId: string) => void;
   onNewDocument: () => void;
   onSaveFile: () => void;
   onOpenFile: (file: File) => void;
@@ -16,7 +20,10 @@ type SidebarProps = {
 export const Sidebar = ({
   introVisible,
   statusMessage,
+  talaId,
+  talaOptions,
   onToggleIntro,
+  onChangeTala,
   onNewDocument,
   onSaveFile,
   onOpenFile,
@@ -45,11 +52,27 @@ export const Sidebar = ({
       className={`px-4 py-2 rounded font-sans text-sm font-semibold transition ${
         introVisible ? 'bg-blue-100 text-blue-700' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-100'
       }`}
-    >
-      {introVisible ? 'Hide Intro' : 'Show Intro'}
-    </button>
+      >
+        {introVisible ? 'Hide Intro' : 'Show Intro'}
+      </button>
 
-    <div className="space-y-3 border-b border-gray-200 pb-3">
+      <label className="space-y-1 border-b border-gray-200 pb-3 font-sans">
+        <span className="block text-xs font-semibold text-gray-700">Tālam Layout</span>
+        <select
+          className="w-full rounded border border-gray-300 bg-white px-2 py-2 text-sm text-gray-700 shadow-sm"
+          value={talaId}
+          onChange={(event) => onChangeTala(event.target.value)}
+        >
+          {talaOptions.map((option) => (
+            <option key={option.id} value={option.id}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <span className="block text-xs text-gray-500 leading-relaxed">{talaOptions.find((option) => option.id === talaId)?.description}</span>
+      </label>
+
+      <div className="space-y-3 border-b border-gray-200 pb-3">
       <button
         onClick={onNewDocument}
         className="w-full px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-100 rounded font-sans text-sm shadow-sm transition"

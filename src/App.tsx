@@ -4,6 +4,7 @@ import { Sidebar } from './components/Sidebar';
 import { createId } from './lib/id';
 import { downloadDocumentFile, readDocumentFile } from './lib/localFiles';
 import { clearDraft, loadDraft, saveDraft } from './lib/storage';
+import { applyTalaToDocument, getTalaOptions } from './lib/talas';
 import { createBlankDocument, createCellBlock } from './lib/templates';
 import type { CellBlockType, NotationBlock, NotationDocument, NotationMetadata } from './types/notation';
 
@@ -69,6 +70,11 @@ const App = () => {
     window.print();
   };
 
+  const changeTala = (talaId: string) => {
+    setDocument((current) => touchDocument(applyTalaToDocument(current, talaId)));
+    setStatusMessage('Tālam changed');
+  };
+
   const newDocument = () => {
     const hasContent =
       document.metadata.ragam ||
@@ -105,7 +111,10 @@ const App = () => {
       <Sidebar
         introVisible={document.introVisible}
         statusMessage={statusMessage}
+        talaId={document.talaId}
+        talaOptions={getTalaOptions()}
         onToggleIntro={toggleIntro}
+        onChangeTala={changeTala}
         onNewDocument={newDocument}
         onSaveFile={saveJsonFile}
         onOpenFile={openJsonFile}

@@ -1,7 +1,7 @@
 import { Fragment } from 'react';
 import { DividerSlot } from './DividerSlot';
 import { SubBeat } from './SubBeat';
-import { getTalaRows, type TalaSegment } from '../../lib/talas';
+import { getTala, getTalaRows, type TalaSegment } from '../../lib/talas';
 import type { CellBlock, NotationBlock, NotationCell } from '../../types/notation';
 
 type AvartanamBlockProps = {
@@ -12,6 +12,7 @@ type AvartanamBlockProps = {
 
 export const AvartanamBlock = ({ block, onUpdate, onRemove }: AvartanamBlockProps) => {
   const isSwaraOnly = block.type === 'swara-avartanam';
+  const tala = getTala(block.talaId);
   const rows = getTalaRows(block.talaId);
 
   const updateCell = (cellIndex: number, newData: NotationCell) => {
@@ -27,10 +28,10 @@ export const AvartanamBlock = ({ block, onUpdate, onRemove }: AvartanamBlockProp
         return (
           <SubBeat
             key={cellIndex}
-            data={block.cells[cellIndex]}
+            data={block.cells[cellIndex] ?? { swara: '', lyric: '', octave: 0 }}
             blockId={block.id}
             cellIndex={cellIndex}
-            totalCells={block.cells.length}
+            totalCells={tala.totalCells}
             update={(cell) => updateCell(cellIndex, cell)}
             hideSahitya={isSwaraOnly}
           />
