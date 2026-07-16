@@ -1,0 +1,93 @@
+body {
+  font-family: 'Spectral', serif;
+  background-color: #ffffff;
+  color: #000;
+  margin: 0;
+}
+
+.grid-input {
+  background: transparent;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.grid-input:hover {
+  background-color: #f3f4f6;
+  border-radius: 4px;
+}
+
+.grid-input:focus {
+  background-color: #eff6ff;
+  border-bottom: 2px solid #93c5fd;
+  border-radius: 4px 4px 0 0;
+}
+
+::placeholder {
+  color: #9ca3af;
+  font-style: italic;
+  opacity: 1;
+}
+
+.block-container .delete-btn {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.block-container:hover .delete-btn {
+  opacity: 1;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+.print-exact {
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  background-color: black !important;
+}
+
+@media print {
+  body {
+    background-color: white !important;
+    margin: 0;
+    padding: 0;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 0.5in;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .delete-btn {
+    display: none !important;
+  }
+
+  .print-workspace {
+    margin: 0 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  input {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: black !important;
+  }
+
+  input::placeholder {
+    color: transparent !important;
+  }
+
+  .print-dot {
+    color: #9ca3af !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
