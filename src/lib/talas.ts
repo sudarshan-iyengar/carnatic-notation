@@ -148,6 +148,30 @@ export const talaRegistry: Record<string, TalaDefinition> = {
         segments: [divider('||'), group(0, 4), divider('|'), group(4, 6), divider('||')]
       }
     ]
+  },
+  'khanda-ata-2-kalai': {
+    id: 'khanda-ata-2-kalai',
+    label: 'Khanda Ata tala, 2 kalai',
+    displayName: 'Khaṇḍa Aṭa tālam',
+    description: '14 aksharas, 2 kalai, 56 notation cells',
+    totalCells: 56,
+    rows: [
+      {
+        id: 'khanda-ata-laghu-1',
+        className: 'mb-6',
+        segments: [divider('||'), group(0, 4), group(4, 4), group(8, 4), group(12, 4), group(16, 4), divider('|')]
+      },
+      {
+        id: 'khanda-ata-laghu-2',
+        className: 'mb-6',
+        segments: [divider('|'), group(20, 4), group(24, 4), group(28, 4), group(32, 4), group(36, 4), divider('|')]
+      },
+      {
+        id: 'khanda-ata-dhrutams',
+        className: '',
+        segments: [divider('|'), group(40, 4), group(44, 4), divider('|'), group(48, 4), group(52, 4), divider('||')]
+      }
+    ]
   }
 };
 

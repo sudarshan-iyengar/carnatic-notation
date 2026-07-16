@@ -22,7 +22,7 @@ export const AvartanamBlock = ({ block, onUpdate, onRemove }: AvartanamBlockProp
   };
 
   const renderBeatGroup = (start: number, count: number) => (
-    <div className="flex flex-row flex-1 justify-between">
+    <div className="flex flex-row shrink-0 justify-between" style={{ width: `${count * 2.5}rem` }}>
       {Array.from({ length: count }, (_, offset) => {
         const cellIndex = start + offset;
         return (

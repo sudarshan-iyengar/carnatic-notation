@@ -29,8 +29,21 @@ describe('talas', () => {
       'adi-1-kalai',
       'rupaka',
       'misra-chapu',
-      'khanda-chapu'
+      'khanda-chapu',
+      'khanda-ata-2-kalai'
     ]);
+  });
+
+  it('models khanda ata 2 kalai as fourteen four-cell groups over three rows', () => {
+    const tala = getTala('khanda-ata-2-kalai');
+    const groups = tala.rows.flatMap((row) => row.segments.filter((segment) => segment.type === 'group'));
+
+    expect(tala.totalCells).toBe(56);
+    expect(tala.rows).toHaveLength(3);
+    expect(groups).toHaveLength(14);
+    expect(groups.every((segment) => segment.type === 'group' && segment.count === 4)).toBe(true);
+    expect(groups[0]).toMatchObject({ start: 0, count: 4 });
+    expect(groups[13]).toMatchObject({ start: 52, count: 4 });
   });
 
   it('resizes up by appending blank cells while preserving existing data', () => {
