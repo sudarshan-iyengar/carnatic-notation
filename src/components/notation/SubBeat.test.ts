@@ -4,9 +4,16 @@ import { getSwaraFontSize } from './SubBeat';
 describe('SubBeat', () => {
   it('shrinks swara phrase text as more swaras are entered in one cell', () => {
     expect(getSwaraFontSize('S')).toBe('1.125rem');
-    expect(getSwaraFontSize('SRGM')).toBe('0.95rem');
-    expect(getSwaraFontSize('SRGMPD')).toBe('0.8rem');
-    expect(getSwaraFontSize('SRGMPDNS')).toBe('0.68rem');
-    expect(getSwaraFontSize('SRGMPDNSRG')).toBe('0.58rem');
+    expect(getSwaraFontSize('SRGM')).toBe('0.82rem');
+    expect(getSwaraFontSize('SRGMPD')).toBe('0.7rem');
+    expect(getSwaraFontSize('SRGMPDNS')).toBe('0.6rem');
+    expect(getSwaraFontSize('SRGMPDNSRG')).toBe('0.52rem');
+  });
+
+  it('uses stricter sizing in compact tala cells so four swaras stay visible', () => {
+    expect(getSwaraFontSize('SRGM', 2)).toBe('0.72rem');
+    expect(getSwaraFontSize('SRGMPD', 2)).toBe('0.62rem');
+    expect(getSwaraFontSize('SRGMPDNS', 2)).toBe('0.54rem');
+    expect(getSwaraFontSize('SRGMPDNSRG', 2)).toBe('0.48rem');
   });
 });

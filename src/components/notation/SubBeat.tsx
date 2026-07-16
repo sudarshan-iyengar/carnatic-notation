@@ -12,14 +12,15 @@ type SubBeatProps = {
   hideSahitya: boolean;
 };
 
-export const getSwaraFontSize = (swara: string) => {
+export const getSwaraFontSize = (swara: string, widthRem = 2.5) => {
   const length = swara.trim().length;
+  const compactCell = widthRem <= 2.1;
 
   if (length <= 2) return '1.125rem';
-  if (length <= 4) return '0.95rem';
-  if (length <= 6) return '0.8rem';
-  if (length <= 8) return '0.68rem';
-  return '0.58rem';
+  if (length <= 4) return compactCell ? '0.72rem' : '0.82rem';
+  if (length <= 6) return compactCell ? '0.62rem' : '0.7rem';
+  if (length <= 8) return compactCell ? '0.54rem' : '0.6rem';
+  return compactCell ? '0.48rem' : '0.52rem';
 };
 
 export const SubBeat = ({ data, update, blockId, cellIndex, totalCells, widthRem, hideSahitya }: SubBeatProps) => {
@@ -69,7 +70,7 @@ export const SubBeat = ({ data, update, blockId, cellIndex, totalCells, widthRem
         type="text"
         className="grid-input w-full text-center font-semibold uppercase relative z-10 swara-input"
         style={{
-          fontSize: getSwaraFontSize(data.swara)
+          fontSize: getSwaraFontSize(data.swara, widthRem)
         }}
         value={data.swara}
         onChange={(event) => update({ ...data, swara: event.target.value })}
