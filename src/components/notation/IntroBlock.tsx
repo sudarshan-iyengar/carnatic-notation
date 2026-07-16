@@ -7,7 +7,7 @@ type IntroBlockProps = {
 };
 
 export const IntroBlock = ({ metadata, onUpdate }: IntroBlockProps) => (
-  <div className="flex justify-between items-start mb-12 text-[15px] leading-relaxed w-full border-b border-gray-200 pb-8">
+  <div className="intro-block flex justify-between items-start mb-12 text-[15px] leading-relaxed w-full border-b border-gray-200 pb-8">
     <div className="space-y-1 w-1/2 pr-4">
       <div className="flex items-center">
         <strong className="w-24 shrink-0">Rāgam:</strong>

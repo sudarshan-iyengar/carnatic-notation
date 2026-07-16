@@ -26,7 +26,7 @@ export const AvartanamBlock = ({ block, onUpdate, onRemove, onInsertAfter }: Ava
 
   const renderBeatGroup = (start: number, count: number) => (
     <div
-      className="flex flex-row shrink-0 justify-between"
+      className="beat-group flex flex-row shrink-0 justify-between"
       style={{
         width: `${count * spacing.cellWidthRem}rem`,
         marginRight: `${spacing.groupGapRem}rem`
@@ -56,14 +56,14 @@ export const AvartanamBlock = ({ block, onUpdate, onRemove, onInsertAfter }: Ava
     }
 
     if (segment.type === 'spacer') {
-      return <div key={segmentIndex} className={`${segment.widthClass} shrink-0 transition-all`} />;
+      return <div key={segmentIndex} className={`tala-spacer ${segment.widthClass} shrink-0 transition-all`} />;
     }
 
     return <DividerSlot key={segmentIndex} char={segment.char} widthClass={segment.widthClass} isSwaraOnly={isSwaraOnly} />;
   };
 
   return (
-    <div className="block-container relative w-full mb-10 pb-4 border-b border-gray-100 print:border-none print:mb-6">
+    <div className="notation-block block-container relative w-full mb-10 pb-4 border-b border-gray-100 print:border-none print:mb-6">
       <button
         onClick={() => onRemove(block.id)}
         className="delete-btn absolute -right-8 top-0 text-gray-400 hover:text-red-500 font-sans text-xl px-2 z-20"
@@ -72,7 +72,7 @@ export const AvartanamBlock = ({ block, onUpdate, onRemove, onInsertAfter }: Ava
       </button>
 
       {rows.map((row) => (
-        <div key={row.id} className={`flex flex-row items-center w-full ${row.className}`}>
+        <div key={row.id} className={`notation-row flex flex-row items-center w-full ${row.className}`}>
           {row.segments.map(renderSegment)}
         </div>
       ))}

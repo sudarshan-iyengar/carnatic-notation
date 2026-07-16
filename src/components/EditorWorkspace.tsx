@@ -13,10 +13,10 @@ type EditorWorkspaceProps = {
 
 export const EditorWorkspace = ({ document, onUpdateMetadata, onUpdateBlock, onRemoveBlock, onInsertAfter }: EditorWorkspaceProps) => (
   <div className="print-workspace ml-56 w-full p-12 flex justify-center">
-    <div className="w-[900px] print:w-full print:max-w-full transition-all">
+    <div className="editor-page w-[900px] print:w-full print:max-w-full transition-all">
       {document.introVisible && <IntroBlock metadata={document.metadata} onUpdate={onUpdateMetadata} />}
 
-      <div className="w-full flex flex-col items-center mt-4">
+      <div className="notation-stack w-full flex flex-col items-center mt-4">
         {document.blocks.map((block) => {
           if (block.type === 'heading') {
             return (

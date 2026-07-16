@@ -60,8 +60,8 @@ export const SubBeat = ({ data, update, blockId, cellIndex, totalCells, widthRem
   };
 
   return (
-    <div className="relative flex flex-col items-center print:w-8 transition-all" style={{ width: `${widthRem}rem` }}>
-      <div className="h-2 w-full flex justify-center items-end">
+    <div className="subbeat-cell relative flex flex-col items-center print:w-8 transition-all" style={{ width: `${widthRem}rem` }}>
+      <div className="octave-dot-row h-2 w-full flex justify-center items-end">
         {data.octave === 1 && <div className="w-1.5 h-1.5 print:w-1 print:h-1 rounded-full mb-0.5 print-exact" />}
       </div>
 
@@ -84,12 +84,12 @@ export const SubBeat = ({ data, update, blockId, cellIndex, totalCells, widthRem
         </span>
       </div>
 
-      <div className="h-2 w-full flex justify-center items-start">
+      <div className="octave-dot-row h-2 w-full flex justify-center items-start">
         {data.octave === -1 && <div className="w-1.5 h-1.5 print:w-1 print:h-1 rounded-full mt-0.5 print-exact" />}
       </div>
 
       {!hideSahitya && (
-        <div className="relative w-full flex justify-center mt-1">
+        <div className="sahityam-layer relative w-full flex justify-center mt-1">
           {data.lyric === '' && <span className="print-dot absolute text-[15px] pointer-events-none">.</span>}
           <input
             id={`sahityam-${blockId}-${cellIndex}`}
