@@ -233,7 +233,7 @@ body {
 
   @page {
     size: letter portrait;
-    margin: 0.35in 0.42in;
+    margin: 0.45in 0.5in;
   }
 
   .no-print {
@@ -241,6 +241,10 @@ body {
   }
 
   .delete-btn {
+    display: none !important;
+  }
+
+  .print-hidden-block {
     display: none !important;
   }
 
@@ -283,10 +287,10 @@ body {
 
   .intro-block {
     align-items: flex-start !important;
-    margin-bottom: 0.1in !important;
+    margin-bottom: 0.28in !important;
     padding-bottom: 0.06in !important;
     border-bottom: 1px solid #d6d6d6 !important;
-    font-size: 9pt !important;
+    font-size: 10pt !important;
     line-height: 1.2 !important;
   }
 
@@ -296,25 +300,25 @@ body {
 
   .intro-block strong {
     width: 1.05in !important;
-    font-weight: 700 !important;
+    font-weight: 600 !important;
   }
 
   .heading-block {
-    margin: 0.045in 0 0.02in !important;
+    margin: 0.14in 0 0.07in !important;
     padding: 0 !important;
     background: transparent !important;
     break-after: avoid;
   }
 
   .heading-block input {
-    font-size: 10.5pt !important;
+    font-size: 11pt !important;
     line-height: 1.1 !important;
-    font-weight: 700 !important;
+    font-weight: 500 !important;
     letter-spacing: 0 !important;
   }
 
   .notation-block {
-    margin-bottom: 0.035in !important;
+    margin-bottom: 0.12in !important;
     padding-bottom: 0 !important;
     border: none !important;
     break-inside: avoid;
@@ -323,7 +327,7 @@ body {
   .notation-row {
     justify-content: center !important;
     align-items: flex-start !important;
-    margin-bottom: 0.012in !important;
+    margin-bottom: 0.055in !important;
     min-height: 0 !important;
   }
 
@@ -364,7 +368,7 @@ body {
     top: 0 !important;
     left: 0 !important;
     font-size: var(--print-swara-font-size) !important;
-    font-weight: 600 !important;
+    font-weight: 400 !important;
   }
 
   .sahityam-layer {
@@ -375,7 +379,7 @@ body {
 
   .sahityam-layer input,
   .print-dot {
-    font-size: 7.5pt !important;
+    font-size: 9.2pt !important;
     line-height: 0.12in !important;
   }
 
@@ -383,7 +387,7 @@ body {
     width: 0.16in !important;
     min-width: 0.16in !important;
     padding-bottom: 0.13in !important;
-    font-size: 11pt !important;
+    font-size: 12pt !important;
     line-height: 0.2in !important;
     color: #111827 !important;
   }

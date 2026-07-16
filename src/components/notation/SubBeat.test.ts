@@ -18,10 +18,10 @@ describe('SubBeat', () => {
   });
 
   it('uses print-specific sizing for compact exported notation', () => {
-    expect(getPrintSwaraFontSize('S')).toBe('10pt');
-    expect(getPrintSwaraFontSize('SRGM')).toBe('8.2pt');
-    expect(getPrintSwaraFontSize('SRGMPD')).toBe('7pt');
-    expect(getPrintSwaraFontSize('SRGMPDNS')).toBe('6.2pt');
-    expect(getPrintSwaraFontSize('SRGMPDNSRG')).toBe('5.6pt');
+    expect(getPrintSwaraFontSize('S')).toBe('10.5pt');
+    expect(getPrintSwaraFontSize('SRGM')).toBe('8.8pt');
+    expect(getPrintSwaraFontSize('SRGMPD')).toBe('7.4pt');
+    expect(getPrintSwaraFontSize('SRGMPDNS')).toBe('6.6pt');
+    expect(getPrintSwaraFontSize('SRGMPDNSRG')).toBe('5.8pt');
   });
 });

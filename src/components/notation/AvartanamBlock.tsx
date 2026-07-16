@@ -7,18 +7,19 @@ import type { CellBlock, CellBlockType, NotationBlock, NotationCell } from '../.
 
 type AvartanamBlockProps = {
   block: CellBlock;
+  printHidden: boolean;
   onUpdate: (blockId: string, block: NotationBlock) => void;
   onRemove: (blockId: string) => void;
   onInsertAfter: (blockId: string, type: 'heading' | CellBlockType) => void;
 };
 
-export const AvartanamBlock = ({ block, onUpdate, onRemove, onInsertAfter }: AvartanamBlockProps) => {
+export const AvartanamBlock = ({ block, printHidden, onUpdate, onRemove, onInsertAfter }: AvartanamBlockProps) => {
   const isSwaraOnly = block.type === 'swara-avartanam';
   const tala = getTala(block.talaId);
   const spacing = tala.spacing ?? DEFAULT_TALA_SPACING;
-  const printCellWidthRem = Math.max(1.45, Math.min(2.05, spacing.cellWidthRem * 0.78));
-  const printGroupGapRem = Math.max(0.28, Math.min(0.55, spacing.groupGapRem * 0.45));
-  const printCellGapRem = 0.18;
+  const printCellWidthRem = Math.max(1.6, Math.min(2.3, spacing.cellWidthRem * 0.88));
+  const printGroupGapRem = Math.max(0.35, Math.min(0.7, spacing.groupGapRem * 0.55));
+  const printCellGapRem = 0.22;
   const rows = getTalaRows(block.talaId);
 
   const updateCell = (cellIndex: number, newData: NotationCell) => {
@@ -70,7 +71,7 @@ export const AvartanamBlock = ({ block, onUpdate, onRemove, onInsertAfter }: Ava
   };
 
   return (
-    <div className="notation-block block-container relative w-full mb-10 pb-4 border-b border-gray-100 print:border-none print:mb-6">
+    <div className={`notation-block block-container relative w-full mb-10 pb-4 border-b border-gray-100 print:border-none print:mb-6 ${printHidden ? 'print-hidden-block' : ''}`}>
       <button
         onClick={() => onRemove(block.id)}
         className="delete-btn absolute -right-8 top-0 text-gray-400 hover:text-red-500 font-sans text-xl px-2 z-20"

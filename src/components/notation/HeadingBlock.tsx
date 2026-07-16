@@ -4,13 +4,14 @@ import type { CellBlockType } from '../../types/notation';
 
 type HeadingBlockProps = {
   block: HeadingBlockType;
+  printHidden: boolean;
   onUpdate: (blockId: string, block: NotationBlock) => void;
   onRemove: (blockId: string) => void;
   onInsertAfter: (blockId: string, type: 'heading' | CellBlockType) => void;
 };
 
-export const HeadingBlock = ({ block, onUpdate, onRemove, onInsertAfter }: HeadingBlockProps) => (
-  <div className="heading-block block-container relative w-full mb-8 bg-gray-50 rounded py-1 print:bg-transparent">
+export const HeadingBlock = ({ block, printHidden, onUpdate, onRemove, onInsertAfter }: HeadingBlockProps) => (
+  <div className={`heading-block block-container relative w-full mb-8 bg-gray-50 rounded py-1 print:bg-transparent ${printHidden ? 'print-hidden-block' : ''}`}>
     <input
       type="text"
       className="grid-input w-full text-center text-xl font-bold tracking-wide bg-transparent"
