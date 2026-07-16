@@ -1,4 +1,4 @@
-import type { KeyboardEvent } from 'react';
+import type { CSSProperties, KeyboardEvent } from 'react';
 import { transliterate } from '../../lib/transliteration';
 import type { NotationCell } from '../../types/notation';
 
@@ -24,6 +24,8 @@ export const getSwaraFontSize = (swara: string, widthRem = 2.5) => {
 };
 
 export const SubBeat = ({ data, update, blockId, cellIndex, totalCells, widthRem, hideSahitya }: SubBeatProps) => {
+  const printCellWidthRem = Math.max(1.25, Math.min(1.85, widthRem * 0.72));
+
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>, type: 'swara' | 'sahityam') => {
     let moveCol: number | null = null;
 
@@ -60,7 +62,15 @@ export const SubBeat = ({ data, update, blockId, cellIndex, totalCells, widthRem
   };
 
   return (
-    <div className="subbeat-cell relative flex flex-col items-center print:w-8 transition-all" style={{ width: `${widthRem}rem` }}>
+    <div
+      className="subbeat-cell relative flex flex-col items-center print:w-8 transition-all"
+      style={
+        {
+          width: `${widthRem}rem`,
+          '--print-cell-width': `${printCellWidthRem}rem`
+        } as CSSProperties
+      }
+    >
       <div className="octave-dot-row h-2 w-full flex justify-center items-end">
         {data.octave === 1 && <div className="w-1.5 h-1.5 print:w-1 print:h-1 rounded-full mb-0.5 print-exact" />}
       </div>
