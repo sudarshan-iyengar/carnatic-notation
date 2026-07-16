@@ -16,8 +16,9 @@ export const AvartanamBlock = ({ block, onUpdate, onRemove, onInsertAfter }: Ava
   const isSwaraOnly = block.type === 'swara-avartanam';
   const tala = getTala(block.talaId);
   const spacing = tala.spacing ?? DEFAULT_TALA_SPACING;
-  const printCellWidthRem = Math.max(1.25, Math.min(1.85, spacing.cellWidthRem * 0.72));
+  const printCellWidthRem = Math.max(1.45, Math.min(2.05, spacing.cellWidthRem * 0.78));
   const printGroupGapRem = Math.max(0.28, Math.min(0.55, spacing.groupGapRem * 0.45));
+  const printCellGapRem = 0.18;
   const rows = getTalaRows(block.talaId);
 
   const updateCell = (cellIndex: number, newData: NotationCell) => {
@@ -33,7 +34,8 @@ export const AvartanamBlock = ({ block, onUpdate, onRemove, onInsertAfter }: Ava
         width: `${count * spacing.cellWidthRem}rem`,
         marginRight: `${spacing.groupGapRem}rem`,
         '--print-cell-width': `${printCellWidthRem}rem`,
-        '--print-group-width': `${count * printCellWidthRem}rem`,
+        '--print-cell-gap': `${printCellGapRem}rem`,
+        '--print-group-width': `${count * printCellWidthRem + Math.max(0, count - 1) * printCellGapRem}rem`,
         '--print-group-gap': `${printGroupGapRem}rem`
       } as CSSProperties}
     >

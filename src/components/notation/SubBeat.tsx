@@ -23,8 +23,18 @@ export const getSwaraFontSize = (swara: string, widthRem = 2.5) => {
   return compactCell ? '0.48rem' : '0.52rem';
 };
 
+export const getPrintSwaraFontSize = (swara: string) => {
+  const length = swara.trim().length;
+
+  if (length <= 2) return '10pt';
+  if (length <= 4) return '8.2pt';
+  if (length <= 6) return '7pt';
+  if (length <= 8) return '6.2pt';
+  return '5.6pt';
+};
+
 export const SubBeat = ({ data, update, blockId, cellIndex, totalCells, widthRem, hideSahitya }: SubBeatProps) => {
-  const printCellWidthRem = Math.max(1.25, Math.min(1.85, widthRem * 0.72));
+  const printCellWidthRem = Math.max(1.45, Math.min(2.05, widthRem * 0.78));
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>, type: 'swara' | 'sahityam') => {
     let moveCol: number | null = null;
@@ -67,7 +77,8 @@ export const SubBeat = ({ data, update, blockId, cellIndex, totalCells, widthRem
       style={
         {
           width: `${widthRem}rem`,
-          '--print-cell-width': `${printCellWidthRem}rem`
+          '--print-cell-width': `${printCellWidthRem}rem`,
+          '--print-swara-font-size': getPrintSwaraFontSize(data.swara)
         } as CSSProperties
       }
     >

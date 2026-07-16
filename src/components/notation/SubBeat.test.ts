@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getSwaraFontSize } from './SubBeat';
+import { getPrintSwaraFontSize, getSwaraFontSize } from './SubBeat';
 
 describe('SubBeat', () => {
   it('shrinks swara phrase text as more swaras are entered in one cell', () => {
@@ -15,5 +15,13 @@ describe('SubBeat', () => {
     expect(getSwaraFontSize('SRGMPD', 2)).toBe('0.62rem');
     expect(getSwaraFontSize('SRGMPDNS', 2)).toBe('0.54rem');
     expect(getSwaraFontSize('SRGMPDNSRG', 2)).toBe('0.48rem');
+  });
+
+  it('uses print-specific sizing for compact exported notation', () => {
+    expect(getPrintSwaraFontSize('S')).toBe('10pt');
+    expect(getPrintSwaraFontSize('SRGM')).toBe('8.2pt');
+    expect(getPrintSwaraFontSize('SRGMPD')).toBe('7pt');
+    expect(getPrintSwaraFontSize('SRGMPDNS')).toBe('6.2pt');
+    expect(getPrintSwaraFontSize('SRGMPDNSRG')).toBe('5.6pt');
   });
 });
