@@ -173,6 +173,23 @@ body {
   padding-right: 0;
 }
 
+.swara-edit-input {
+  color: transparent;
+  caret-color: #111827;
+}
+
+.swara-edit-input::selection {
+  color: transparent;
+  background: #bfdbfe;
+}
+
+.swara-display {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  line-height: 1.75rem;
+}
+
 ::placeholder {
   color: #9ca3af;
   font-style: italic;
