@@ -5,6 +5,7 @@ import type { TemplateOption } from '../lib/templates';
 type SidebarProps = {
   introVisible: boolean;
   statusMessage: string;
+  isExportingPdf: boolean;
   talaId: string;
   talaOptions: TalaOption[];
   templateOptions: TemplateOption[];
@@ -23,6 +24,7 @@ type SidebarProps = {
 export const Sidebar = ({
   introVisible,
   statusMessage,
+  isExportingPdf,
   talaId,
   talaOptions,
   templateOptions,
@@ -158,7 +160,8 @@ export const Sidebar = ({
 
     <button
       onClick={onPrint}
-      className="px-4 py-3 bg-gray-800 text-white hover:bg-black rounded font-sans font-semibold text-sm shadow-sm transition flex justify-center items-center gap-2"
+      disabled={isExportingPdf}
+      className="px-4 py-3 bg-gray-800 text-white hover:bg-black rounded font-sans font-semibold text-sm shadow-sm transition flex justify-center items-center gap-2 disabled:cursor-wait disabled:opacity-70"
     >
       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path
@@ -168,7 +171,7 @@ export const Sidebar = ({
           d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
         />
       </svg>
-      Export to PDF
+      {isExportingPdf ? 'Preparing PDF...' : 'Export to PDF'}
     </button>
   </div>
   );

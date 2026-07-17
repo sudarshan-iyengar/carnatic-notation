@@ -138,6 +138,8 @@ button {
 .hover\:bg-gray-100:hover { background-color: #f3f4f6; }
 .hover\:bg-indigo-700:hover { background-color: #4338ca; }
 .hover\:text-red-500:hover { color: #ef4444; }
+.disabled\:cursor-wait:disabled { cursor: wait; }
+.disabled\:opacity-70:disabled { opacity: 0.7; }
 
 body {
   font-family: 'Spectral', serif;
@@ -239,8 +241,8 @@ body.pdf-exporting .print-workspace {
 }
 
 body.pdf-exporting .editor-page {
-  width: 1080px !important;
-  max-width: 1080px !important;
+  width: 1240px !important;
+  max-width: 1240px !important;
   margin: 0 auto !important;
   padding: 0 !important;
   transition: none !important;
@@ -266,13 +268,44 @@ body.pdf-exporting .heading-block {
 
 body.pdf-exporting .notation-block {
   margin-bottom: 1.35rem !important;
-  padding-bottom: 0.95rem !important;
+  padding-top: 0.85rem !important;
+  padding-bottom: 1.35rem !important;
   border-bottom: 1px solid #f3f4f6 !important;
   overflow: visible !important;
 }
 
 body.pdf-exporting .notation-row {
-  margin-bottom: 0.85rem !important;
+  margin-bottom: 1.15rem !important;
+  overflow: visible !important;
+}
+
+body.pdf-exporting .beat-group {
+  width: calc(var(--print-group-width) * 1.42) !important;
+  gap: calc(var(--print-cell-gap) * 1.35) !important;
+  margin-right: calc(var(--print-group-gap) * 1.45) !important;
+  justify-content: flex-start !important;
+}
+
+body.pdf-exporting .subbeat-cell {
+  width: calc(var(--print-cell-width) * 1.42) !important;
+  min-width: calc(var(--print-cell-width) * 1.42) !important;
+}
+
+body.pdf-exporting .swara-layer,
+body.pdf-exporting .swara-input,
+body.pdf-exporting .swara-display {
+  min-height: 2rem !important;
+  line-height: 2rem !important;
+  overflow: visible !important;
+}
+
+body.pdf-exporting .octave-dot-row {
+  height: 0.7rem !important;
+}
+
+body.pdf-exporting .sahityam-layer {
+  min-height: 1.45rem !important;
+  line-height: 1.45rem !important;
   overflow: visible !important;
 }
 

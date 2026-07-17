@@ -3,10 +3,10 @@ import type { NotationDocument } from '../types/notation';
 const EXPORT_CLASS = 'pdf-exporting';
 const PAGE_WIDTH_MM = 210;
 const PAGE_HEIGHT_MM = 297;
-const PAGE_MARGIN_MM = 10;
+const PAGE_MARGIN_MM = 7;
 const BLOCK_GAP_MM = 3.5;
-const EXPORT_PAGE_WIDTH_PX = 1080;
-const CAPTURE_PADDING_PX = 18;
+const EXPORT_PAGE_WIDTH_PX = 1240;
+const CAPTURE_PADDING_PX = 42;
 
 const getFileName = (document: NotationDocument) => {
   const title = document.metadata.title || document.metadata.ragam || 'carnatic-notation';
@@ -64,6 +64,26 @@ const getExportSections = () =>
     )
   ).filter((section) => section.offsetParent !== null);
 
+const getExportGroups = () => {
+  const sections = getExportSections();
+  const groups: HTMLElement[][] = [];
+
+  for (let index = 0; index < sections.length; index += 1) {
+    const section = sections[index];
+    const nextSection = sections[index + 1];
+
+    if (section.classList.contains('heading-block') && nextSection?.classList.contains('notation-block')) {
+      groups.push([section, nextSection]);
+      index += 1;
+      continue;
+    }
+
+    groups.push([section]);
+  }
+
+  return groups;
+};
+
 export const exportNotationPdf = async (document: NotationDocument) => {
   const page = window.document.querySelector<HTMLElement>('.editor-page');
   if (!page) throw new Error('Could not find notation page to export.');
@@ -76,27 +96,15 @@ export const exportNotationPdf = async (document: NotationDocument) => {
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const contentWidthMm = PAGE_WIDTH_MM - PAGE_MARGIN_MM * 2;
     const contentHeightMm = PAGE_HEIGHT_MM - PAGE_MARGIN_MM * 2;
-    const sections = getExportSections();
-    if (sections.length === 0) throw new Error('There is no filled notation to export.');
+    const groups = getExportGroups();
+    if (groups.length === 0) throw new Error('There is no filled notation to export.');
 
     let cursorY = PAGE_MARGIN_MM;
 
-    for (const section of sections) {
-      const sectionCanvas = await html2canvas(section, {
-        backgroundColor: '#ffffff',
-        scale: Math.max(1.5, Math.min(1.8, window.devicePixelRatio || 1.5)),
-        useCORS: true,
-        logging: false,
-        windowWidth: Math.max(page.scrollWidth, EXPORT_PAGE_WIDTH_PX),
-        windowHeight: section.scrollHeight,
-        onclone: prepareCloneForExport
-      });
-      const canvas = addCanvasPadding(sectionCanvas);
-
+    const addCanvasToPdf = (canvas: HTMLCanvasElement) => {
       const sectionHeightMm = (canvas.height * contentWidthMm) / canvas.width;
-      const startsNewPage = cursorY > PAGE_MARGIN_MM && cursorY + sectionHeightMm > PAGE_MARGIN_MM + contentHeightMm;
 
-      if (startsNewPage) {
+      if (cursorY > PAGE_MARGIN_MM && cursorY + sectionHeightMm > PAGE_MARGIN_MM + contentHeightMm) {
         pdf.addPage();
         cursorY = PAGE_MARGIN_MM;
       }
@@ -104,7 +112,7 @@ export const exportNotationPdf = async (document: NotationDocument) => {
       if (sectionHeightMm <= contentHeightMm) {
         pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', PAGE_MARGIN_MM, cursorY, contentWidthMm, sectionHeightMm);
         cursorY += sectionHeightMm + BLOCK_GAP_MM;
-        continue;
+        return;
       }
 
       const pxPerMm = canvas.width / contentWidthMm;
@@ -134,6 +142,35 @@ export const exportNotationPdf = async (document: NotationDocument) => {
         cursorY += currentSliceHeightMm + BLOCK_GAP_MM;
         sourceY += currentSliceHeightPx;
       }
+    };
+
+    for (const group of groups) {
+      const canvases = await Promise.all(
+        group.map(async (section) => {
+          const sectionCanvas = await html2canvas(section, {
+            backgroundColor: '#ffffff',
+            scale: Math.max(1.5, Math.min(1.8, window.devicePixelRatio || 1.5)),
+            useCORS: true,
+            logging: false,
+            windowWidth: Math.max(page.scrollWidth, EXPORT_PAGE_WIDTH_PX),
+            windowHeight: section.scrollHeight,
+            onclone: prepareCloneForExport
+          });
+
+          return addCanvasPadding(sectionCanvas);
+        })
+      );
+
+      const groupHeightMm =
+        canvases.reduce((height, canvas) => height + (canvas.height * contentWidthMm) / canvas.width, 0) +
+        BLOCK_GAP_MM * Math.max(0, canvases.length - 1);
+
+      if (groupHeightMm <= contentHeightMm && cursorY > PAGE_MARGIN_MM && cursorY + groupHeightMm > PAGE_MARGIN_MM + contentHeightMm) {
+        pdf.addPage();
+        cursorY = PAGE_MARGIN_MM;
+      }
+
+      canvases.forEach(addCanvasToPdf);
     }
 
     pdf.save(getFileName(document));

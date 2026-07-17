@@ -20,6 +20,7 @@ const App = () => {
     return demoDocument ?? loadDraft() ?? createBlankDocument();
   });
   const [statusMessage, setStatusMessage] = useState('Autosaves locally');
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
 
   useEffect(() => {
     saveDraft(document);
@@ -87,13 +88,18 @@ const App = () => {
   };
 
   const exportPdf = async () => {
+    if (isExportingPdf) return;
+
     try {
+      setIsExportingPdf(true);
       setStatusMessage('Preparing PDF...');
       await exportNotationPdf(document);
       setStatusMessage('Downloaded PDF');
     } catch (error) {
       setStatusMessage('Could not export PDF');
       window.alert(error instanceof Error ? error.message : 'Could not export PDF.');
+    } finally {
+      setIsExportingPdf(false);
     }
   };
 
@@ -153,6 +159,7 @@ const App = () => {
       <Sidebar
         introVisible={document.introVisible}
         statusMessage={statusMessage}
+        isExportingPdf={isExportingPdf}
         talaId={document.talaId}
         talaOptions={getTalaOptions()}
         templateOptions={getTemplateOptions()}
