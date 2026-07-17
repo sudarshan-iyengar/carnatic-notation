@@ -239,8 +239,8 @@ body.pdf-exporting .print-workspace {
 }
 
 body.pdf-exporting .editor-page {
-  width: 980px !important;
-  max-width: 980px !important;
+  width: 1080px !important;
+  max-width: 1080px !important;
   margin: 0 auto !important;
   padding: 0 !important;
   transition: none !important;
@@ -258,19 +258,22 @@ body.pdf-exporting .intro-block {
 
 body.pdf-exporting .heading-block {
   margin: 1.5rem 0 0.9rem !important;
-  padding: 0.25rem 0 !important;
+  padding: 0.35rem 0 !important;
   background-color: #f8fafc !important;
   border-radius: 4px !important;
+  overflow: visible !important;
 }
 
 body.pdf-exporting .notation-block {
   margin-bottom: 1.35rem !important;
-  padding-bottom: 0.7rem !important;
+  padding-bottom: 0.95rem !important;
   border-bottom: 1px solid #f3f4f6 !important;
+  overflow: visible !important;
 }
 
 body.pdf-exporting .notation-row {
   margin-bottom: 0.85rem !important;
+  overflow: visible !important;
 }
 
 body.pdf-exporting input {

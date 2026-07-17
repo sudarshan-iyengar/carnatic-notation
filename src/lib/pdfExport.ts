@@ -3,8 +3,10 @@ import type { NotationDocument } from '../types/notation';
 const EXPORT_CLASS = 'pdf-exporting';
 const PAGE_WIDTH_MM = 210;
 const PAGE_HEIGHT_MM = 297;
-const PAGE_MARGIN_MM = 14;
+const PAGE_MARGIN_MM = 10;
 const BLOCK_GAP_MM = 3.5;
+const EXPORT_PAGE_WIDTH_PX = 1080;
+const CAPTURE_PADDING_PX = 18;
 
 const getFileName = (document: NotationDocument) => {
   const title = document.metadata.title || document.metadata.ragam || 'carnatic-notation';
@@ -40,6 +42,21 @@ const prepareCloneForExport = (clonedDocument: Document) => {
   });
 };
 
+const addCanvasPadding = (canvas: HTMLCanvasElement) => {
+  const paddedCanvas = window.document.createElement('canvas');
+  paddedCanvas.width = canvas.width + CAPTURE_PADDING_PX * 2;
+  paddedCanvas.height = canvas.height + CAPTURE_PADDING_PX * 2;
+
+  const context = paddedCanvas.getContext('2d');
+  if (!context) throw new Error('Could not prepare PDF section.');
+
+  context.fillStyle = '#ffffff';
+  context.fillRect(0, 0, paddedCanvas.width, paddedCanvas.height);
+  context.drawImage(canvas, CAPTURE_PADDING_PX, CAPTURE_PADDING_PX);
+
+  return paddedCanvas;
+};
+
 const getExportSections = () =>
   Array.from(
     window.document.querySelectorAll<HTMLElement>(
@@ -53,7 +70,6 @@ export const exportNotationPdf = async (document: NotationDocument) => {
 
   const [{ default: html2canvas }, { jsPDF }] = await Promise.all([import('html2canvas'), import('jspdf')]);
 
-  window.document.body.classList.add(EXPORT_CLASS);
   await waitForPaint();
 
   try {
@@ -66,15 +82,16 @@ export const exportNotationPdf = async (document: NotationDocument) => {
     let cursorY = PAGE_MARGIN_MM;
 
     for (const section of sections) {
-      const canvas = await html2canvas(section, {
+      const sectionCanvas = await html2canvas(section, {
         backgroundColor: '#ffffff',
         scale: Math.max(1.5, Math.min(1.8, window.devicePixelRatio || 1.5)),
         useCORS: true,
         logging: false,
-        windowWidth: page.scrollWidth,
+        windowWidth: Math.max(page.scrollWidth, EXPORT_PAGE_WIDTH_PX),
         windowHeight: section.scrollHeight,
         onclone: prepareCloneForExport
       });
+      const canvas = addCanvasPadding(sectionCanvas);
 
       const sectionHeightMm = (canvas.height * contentWidthMm) / canvas.width;
       const startsNewPage = cursorY > PAGE_MARGIN_MM && cursorY + sectionHeightMm > PAGE_MARGIN_MM + contentHeightMm;
@@ -121,6 +138,6 @@ export const exportNotationPdf = async (document: NotationDocument) => {
 
     pdf.save(getFileName(document));
   } finally {
-    window.document.body.classList.remove(EXPORT_CLASS);
+    await waitForPaint();
   }
 };
