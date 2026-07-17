@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { EditorWorkspace } from './components/EditorWorkspace';
 import { Sidebar } from './components/Sidebar';
+import { getDemoDocument } from './lib/demoDocuments';
 import { downloadDocumentFile, readDocumentFile } from './lib/localFiles';
 import { exportNotationPdf } from './lib/pdfExport';
 import { clearDraft, loadDraft, saveDraft } from './lib/storage';
@@ -14,7 +15,10 @@ const touchDocument = (document: NotationDocument): NotationDocument => ({
 });
 
 const App = () => {
-  const [document, setDocument] = useState<NotationDocument>(() => loadDraft() ?? createBlankDocument());
+  const [document, setDocument] = useState<NotationDocument>(() => {
+    const demoDocument = getDemoDocument(new URLSearchParams(window.location.search).get('demo'));
+    return demoDocument ?? loadDraft() ?? createBlankDocument();
+  });
   const [statusMessage, setStatusMessage] = useState('Autosaves locally');
 
   useEffect(() => {
