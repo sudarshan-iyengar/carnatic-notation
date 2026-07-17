@@ -259,36 +259,37 @@ body.pdf-exporting .intro-block {
 }
 
 body.pdf-exporting .heading-block {
-  margin: 1.5rem 0 0.9rem !important;
-  padding: 0.35rem 0 !important;
+  margin: 0.65rem 0 0.45rem !important;
+  padding: 0.25rem 0 !important;
   background-color: #f8fafc !important;
   border-radius: 4px !important;
   overflow: visible !important;
 }
 
 body.pdf-exporting .notation-block {
-  margin-bottom: 1.35rem !important;
-  padding-top: 0.85rem !important;
-  padding-bottom: 1.35rem !important;
+  margin-bottom: 0.45rem !important;
+  padding-top: 0.2rem !important;
+  padding-bottom: 0.55rem !important;
   border-bottom: 1px solid #f3f4f6 !important;
   overflow: visible !important;
 }
 
 body.pdf-exporting .notation-row {
-  margin-bottom: 1.15rem !important;
+  justify-content: space-between !important;
+  margin-bottom: 0.62rem !important;
   overflow: visible !important;
 }
 
 body.pdf-exporting .beat-group {
-  width: calc(var(--print-group-width) * 1.42) !important;
+  width: calc(var(--print-group-width) * 1.22) !important;
   gap: calc(var(--print-cell-gap) * 1.35) !important;
-  margin-right: calc(var(--print-group-gap) * 1.45) !important;
+  margin-right: 0 !important;
   justify-content: flex-start !important;
 }
 
 body.pdf-exporting .subbeat-cell {
-  width: calc(var(--print-cell-width) * 1.42) !important;
-  min-width: calc(var(--print-cell-width) * 1.42) !important;
+  width: calc(var(--print-cell-width) * 1.22) !important;
+  min-width: calc(var(--print-cell-width) * 1.22) !important;
 }
 
 body.pdf-exporting .swara-layer,

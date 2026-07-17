@@ -4,9 +4,9 @@ const EXPORT_CLASS = 'pdf-exporting';
 const PAGE_WIDTH_MM = 210;
 const PAGE_HEIGHT_MM = 297;
 const PAGE_MARGIN_MM = 7;
-const BLOCK_GAP_MM = 3.5;
+const BLOCK_GAP_MM = 1.2;
 const EXPORT_PAGE_WIDTH_PX = 1240;
-const CAPTURE_PADDING_PX = 42;
+const CAPTURE_PADDING_PX = 8;
 
 const getFileName = (document: NotationDocument) => {
   const title = document.metadata.title || document.metadata.ragam || 'carnatic-notation';
