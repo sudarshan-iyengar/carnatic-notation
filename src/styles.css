@@ -266,6 +266,17 @@ body.pdf-exporting .heading-block {
   overflow: visible !important;
 }
 
+body.pdf-exporting .heading-block input,
+body.pdf-exporting .heading-block .pdf-export-value {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 2rem !important;
+  min-height: 2rem !important;
+  line-height: 2rem !important;
+  padding: 0 !important;
+}
+
 body.pdf-exporting .notation-block {
   margin-bottom: 0.45rem !important;
   padding-top: 0.2rem !important;

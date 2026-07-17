@@ -146,14 +146,14 @@ export const Sidebar = ({
       onClick={onAddAvartanam}
       className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded font-sans text-sm shadow-sm transition"
     >
-      + Add Avartanam
+      + Add Swara + Sahitya
     </button>
 
     <button
       onClick={onAddSwaraLine}
       className="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded font-sans text-sm shadow-sm transition"
     >
-      + Add Swara Line
+      + Add Swara
     </button>
 
     <div className="flex-grow" />
