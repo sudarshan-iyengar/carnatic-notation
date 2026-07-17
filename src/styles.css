@@ -253,9 +253,21 @@ body.pdf-exporting .notation-stack {
 }
 
 body.pdf-exporting .intro-block {
+  justify-content: space-between !important;
   margin-bottom: 2.25rem !important;
   padding-bottom: 0.75rem !important;
   border-bottom: 1px solid #e5e7eb !important;
+}
+
+body.pdf-exporting .intro-block > div:first-child {
+  width: 42% !important;
+  padding-right: 0 !important;
+}
+
+body.pdf-exporting .intro-block > div:last-child {
+  width: 38% !important;
+  margin-left: auto !important;
+  padding-left: 0 !important;
 }
 
 body.pdf-exporting .heading-block {
