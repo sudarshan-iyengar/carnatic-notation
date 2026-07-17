@@ -4,6 +4,7 @@ const EXPORT_CLASS = 'pdf-exporting';
 const PAGE_WIDTH_MM = 210;
 const PAGE_HEIGHT_MM = 297;
 const PAGE_MARGIN_MM = 14;
+const BLOCK_GAP_MM = 3.5;
 
 const getFileName = (document: NotationDocument) => {
   const title = document.metadata.title || document.metadata.ragam || 'carnatic-notation';
@@ -19,6 +20,33 @@ const waitForPaint = () =>
     requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
   });
 
+const prepareCloneForExport = (clonedDocument: Document) => {
+  clonedDocument.body.classList.add(EXPORT_CLASS);
+  clonedDocument.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
+    if (input.classList.contains('swara-edit-input')) {
+      input.style.visibility = 'hidden';
+      return;
+    }
+
+    if (!input.value) {
+      input.style.visibility = 'hidden';
+      return;
+    }
+
+    const replacement = clonedDocument.createElement('span');
+    replacement.className = `${input.className} pdf-export-value`;
+    replacement.textContent = input.value;
+    input.replaceWith(replacement);
+  });
+};
+
+const getExportSections = () =>
+  Array.from(
+    window.document.querySelectorAll<HTMLElement>(
+      '.editor-page > .intro-block, .notation-stack > .heading-block:not(.print-hidden-block), .notation-stack > .notation-block:not(.print-hidden-block)'
+    )
+  ).filter((section) => section.offsetParent !== null);
+
 export const exportNotationPdf = async (document: NotationDocument) => {
   const page = window.document.querySelector<HTMLElement>('.editor-page');
   if (!page) throw new Error('Could not find notation page to export.');
@@ -29,62 +57,66 @@ export const exportNotationPdf = async (document: NotationDocument) => {
   await waitForPaint();
 
   try {
-    const canvas = await html2canvas(page, {
-      backgroundColor: '#ffffff',
-      scale: Math.max(2, Math.min(2.5, window.devicePixelRatio || 2)),
-      useCORS: true,
-      logging: false,
-      windowWidth: page.scrollWidth,
-      windowHeight: page.scrollHeight,
-      onclone: (clonedDocument) => {
-        clonedDocument.body.classList.add(EXPORT_CLASS);
-        clonedDocument.querySelectorAll<HTMLInputElement>('input').forEach((input) => {
-          if (input.classList.contains('swara-edit-input')) {
-            input.style.visibility = 'hidden';
-            return;
-          }
-
-          if (!input.value) {
-            input.style.visibility = 'hidden';
-            return;
-          }
-
-          const replacement = clonedDocument.createElement('span');
-          replacement.className = `${input.className} pdf-export-value`;
-          replacement.textContent = input.value;
-          input.replaceWith(replacement);
-        });
-      }
-    });
-
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     const contentWidthMm = PAGE_WIDTH_MM - PAGE_MARGIN_MM * 2;
     const contentHeightMm = PAGE_HEIGHT_MM - PAGE_MARGIN_MM * 2;
-    const pxPerMm = canvas.width / contentWidthMm;
-    const pageSliceHeightPx = Math.floor(contentHeightMm * pxPerMm);
-    let sourceY = 0;
-    let pageIndex = 0;
+    const sections = getExportSections();
+    if (sections.length === 0) throw new Error('There is no filled notation to export.');
 
-    while (sourceY < canvas.height) {
-      const sliceHeightPx = Math.min(pageSliceHeightPx, canvas.height - sourceY);
-      const pageCanvas = window.document.createElement('canvas');
-      pageCanvas.width = canvas.width;
-      pageCanvas.height = sliceHeightPx;
+    let cursorY = PAGE_MARGIN_MM;
 
-      const context = pageCanvas.getContext('2d');
-      if (!context) throw new Error('Could not prepare PDF page.');
+    for (const section of sections) {
+      const canvas = await html2canvas(section, {
+        backgroundColor: '#ffffff',
+        scale: Math.max(1.5, Math.min(1.8, window.devicePixelRatio || 1.5)),
+        useCORS: true,
+        logging: false,
+        windowWidth: page.scrollWidth,
+        windowHeight: section.scrollHeight,
+        onclone: prepareCloneForExport
+      });
 
-      context.fillStyle = '#ffffff';
-      context.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-      context.drawImage(canvas, 0, sourceY, canvas.width, sliceHeightPx, 0, 0, canvas.width, sliceHeightPx);
+      const sectionHeightMm = (canvas.height * contentWidthMm) / canvas.width;
+      const startsNewPage = cursorY > PAGE_MARGIN_MM && cursorY + sectionHeightMm > PAGE_MARGIN_MM + contentHeightMm;
 
-      if (pageIndex > 0) pdf.addPage();
+      if (startsNewPage) {
+        pdf.addPage();
+        cursorY = PAGE_MARGIN_MM;
+      }
 
-      const sliceHeightMm = sliceHeightPx / pxPerMm;
-      pdf.addImage(pageCanvas.toDataURL('image/png'), 'PNG', PAGE_MARGIN_MM, PAGE_MARGIN_MM, contentWidthMm, sliceHeightMm);
+      if (sectionHeightMm <= contentHeightMm) {
+        pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', PAGE_MARGIN_MM, cursorY, contentWidthMm, sectionHeightMm);
+        cursorY += sectionHeightMm + BLOCK_GAP_MM;
+        continue;
+      }
 
-      sourceY += sliceHeightPx;
-      pageIndex += 1;
+      const pxPerMm = canvas.width / contentWidthMm;
+      const sliceHeightPx = Math.floor(contentHeightMm * pxPerMm);
+      let sourceY = 0;
+
+      while (sourceY < canvas.height) {
+        const currentSliceHeightPx = Math.min(sliceHeightPx, canvas.height - sourceY);
+        const pageCanvas = window.document.createElement('canvas');
+        pageCanvas.width = canvas.width;
+        pageCanvas.height = currentSliceHeightPx;
+
+        const context = pageCanvas.getContext('2d');
+        if (!context) throw new Error('Could not prepare PDF page.');
+
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+        context.drawImage(canvas, 0, sourceY, canvas.width, currentSliceHeightPx, 0, 0, canvas.width, currentSliceHeightPx);
+
+        if (cursorY > PAGE_MARGIN_MM || sourceY > 0) {
+          pdf.addPage();
+          cursorY = PAGE_MARGIN_MM;
+        }
+
+        const currentSliceHeightMm = currentSliceHeightPx / pxPerMm;
+        pdf.addImage(pageCanvas.toDataURL('image/jpeg', 0.95), 'JPEG', PAGE_MARGIN_MM, cursorY, contentWidthMm, currentSliceHeightMm);
+        cursorY += currentSliceHeightMm + BLOCK_GAP_MM;
+        sourceY += currentSliceHeightPx;
+      }
     }
 
     pdf.save(getFileName(document));
