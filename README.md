@@ -15,7 +15,7 @@ The editor is designed for quickly laying out swaras, sahityam, octave dots, tal
 - Start from Adi tala or Ata tala varnam templates.
 - Save your work as a local JSON file.
 - Reopen saved JSON notation files later.
-- Export to PDF using the browser print dialog.
+- Export a styled PDF from the editor.
 
 ## Basic Use
 
@@ -30,10 +30,10 @@ The page starts with:
 Use the sidebar to add more material:
 
 - `+ Add Heading`
-- `+ Add Avartanam`
-- `+ Add Swara Line`
+- `+ Add Swara + Sahitya`
+- `+ Add Swara`
 
-You can also hover over existing blocks and use the inline insert controls to add headings, avartanams, or swara lines exactly where you need them.
+You can also hover over existing blocks and use the inline insert controls to add headings, swara+sahitya avartanams, or swara-only lines exactly where you need them.
 
 ## Keyboard Controls
 
@@ -140,9 +140,14 @@ The JSON file is the editable project format.
 
 Click `Export to PDF`.
 
-This opens the browser print dialog. Choose `Save as PDF` or your system's PDF printer.
+The editor generates a styled A4 PDF and downloads it locally.
 
-The print view hides editor controls and keeps the notation layout.
+The PDF export hides editor controls, preserves the notation layout, uses the available page width, and keeps the intro metadata, headings, swaras, sahityam, tala dividers, and octave dots aligned for reading.
+
+## Releases
+
+- `v2.1.0`: Refines the post-2.0 PDF export and documentation, including tighter notation spacing, full-width export rows, improved heading alignment, better intro metadata alignment, and clearer sidebar labels.
+- `v2.0.0`: Major release with styled PDF export, varnam templates, talam selection, local JSON save/open, and the modular React/TypeScript architecture.
 
 ## Development
 
