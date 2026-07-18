@@ -313,62 +313,36 @@ body.pdf-exporting .beat-group {
 body.pdf-exporting .subbeat-cell {
   width: calc(var(--print-cell-width) * 1.22) !important;
   min-width: calc(var(--print-cell-width) * 1.22) !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  padding-top: 0.22rem !important;
 }
 
 body.pdf-exporting .swara-layer,
 body.pdf-exporting .swara-input,
 body.pdf-exporting .swara-display {
-  height: 1.25rem !important;
-  min-height: 1.25rem !important;
-  line-height: 1.25rem !important;
+  min-height: 2rem !important;
+  line-height: 2rem !important;
   overflow: visible !important;
-}
-
-body.pdf-exporting .swara-layer {
-  order: 1 !important;
 }
 
 body.pdf-exporting .octave-dot-row {
-  position: absolute !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 0 !important;
-  min-height: 0 !important;
-  line-height: 0 !important;
+  height: 0.7rem !important;
+}
+
+body.pdf-exporting .subbeat-cell > .octave-dot-row:first-child {
+  height: 0.45rem !important;
+  min-height: 0.45rem !important;
+  line-height: 0.45rem !important;
   overflow: visible !important;
-  pointer-events: none !important;
 }
 
-body.pdf-exporting .upper-octave-dot-row {
-  top: 0.14rem !important;
-  align-items: center !important;
-}
-
-body.pdf-exporting .lower-octave-dot-row {
-  top: 1.62rem !important;
-  align-items: center !important;
-}
-
-body.pdf-exporting .octave-dot-row .print-exact {
-  margin: 0 !important;
-  transform: none !important;
-}
-
-body.pdf-exporting .upper-octave-dot-row + .swara-layer {
-  margin-top: 0 !important;
+body.pdf-exporting .subbeat-cell > .octave-dot-row:first-child .print-exact {
+  margin-bottom: 0 !important;
+  transform: translateY(0.22rem) !important;
 }
 
 body.pdf-exporting .sahityam-layer {
-  order: 2 !important;
   margin-top: 0 !important;
-  padding-top: 0.62rem !important;
-  min-height: 1.6rem !important;
-  line-height: 1.02rem !important;
+  min-height: 1.45rem !important;
+  line-height: 1.45rem !important;
   overflow: visible !important;
 }
 
