@@ -327,6 +327,16 @@ body.pdf-exporting .octave-dot-row {
   height: 0.7rem !important;
 }
 
+body.pdf-exporting .subbeat-cell > .octave-dot-row:first-child {
+  height: 0.34rem !important;
+  overflow: visible !important;
+}
+
+body.pdf-exporting .subbeat-cell > .octave-dot-row:first-child .print-exact {
+  margin-bottom: -0.08rem !important;
+  transform: translateY(0.2rem) !important;
+}
+
 body.pdf-exporting .sahityam-layer {
   min-height: 1.45rem !important;
   line-height: 1.45rem !important;
