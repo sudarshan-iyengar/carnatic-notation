@@ -318,28 +318,39 @@ body.pdf-exporting .subbeat-cell {
 body.pdf-exporting .swara-layer,
 body.pdf-exporting .swara-input,
 body.pdf-exporting .swara-display {
-  min-height: 2rem !important;
-  line-height: 2rem !important;
+  height: 1.45rem !important;
+  min-height: 1.45rem !important;
+  line-height: 1.45rem !important;
   overflow: visible !important;
 }
 
 body.pdf-exporting .octave-dot-row {
-  height: 0.7rem !important;
+  height: 0.34rem !important;
+  min-height: 0.34rem !important;
+  line-height: 0.34rem !important;
+  overflow: visible !important;
 }
 
 body.pdf-exporting .subbeat-cell > .octave-dot-row:first-child {
-  height: 0.34rem !important;
+  height: 0.38rem !important;
+  min-height: 0.38rem !important;
+  line-height: 0.38rem !important;
   overflow: visible !important;
 }
 
 body.pdf-exporting .subbeat-cell > .octave-dot-row:first-child .print-exact {
-  margin-bottom: -0.08rem !important;
-  transform: translateY(0.2rem) !important;
+  margin-bottom: -0.03rem !important;
+  transform: none !important;
+}
+
+body.pdf-exporting .subbeat-cell > .octave-dot-row:nth-of-type(2) .print-exact {
+  margin-top: -0.03rem !important;
 }
 
 body.pdf-exporting .sahityam-layer {
-  min-height: 1.45rem !important;
-  line-height: 1.45rem !important;
+  margin-top: 0 !important;
+  min-height: 1.1rem !important;
+  line-height: 1.1rem !important;
   overflow: visible !important;
 }
 
